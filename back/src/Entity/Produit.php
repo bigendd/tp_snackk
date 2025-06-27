@@ -2,15 +2,18 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[ApiResource]
+
+
 class Produit
 {
     #[ORM\Id]
@@ -33,11 +36,7 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produit')]
     private ?Category $category = null;
 
-    /**
-     * @var Collection<int, Ingredient>
-     */
-    #[ORM\ManyToMany(targetEntity: Ingredient::class, mappedBy: 'produit')]
-    private Collection $ingredients;
+
 
     /**
      * @var Collection<int, Sauce>
@@ -57,12 +56,18 @@ class Produit
     #[ORM\OneToMany(targetEntity: Supplement::class, mappedBy: 'produit')]
     private Collection $supplement;
 
+    /**
+     * @var Collection<int, Ingredient>
+     */
+    #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'produit')]
+    private Collection $ingredients;
+
     public function __construct()
     {
-        $this->ingredients = new ArrayCollection();
         $this->sauce = new ArrayCollection();
         $this->viande = new ArrayCollection();
         $this->supplement = new ArrayCollection();
+        $this->ingredients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,32 +135,10 @@ class Produit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ingredient>
-     */
-    public function getIngredients(): Collection
-    {
-        return $this->ingredients;
-    }
 
-    public function addIngredient(Ingredient $ingredient): static
-    {
-        if (!$this->ingredients->contains($ingredient)) {
-            $this->ingredients->add($ingredient);
-            $ingredient->addProduit($this);
-        }
 
-        return $this;
-    }
 
-    public function removeIngredient(Ingredient $ingredient): static
-    {
-        if ($this->ingredients->removeElement($ingredient)) {
-            $ingredient->removeProduit($this);
-        }
 
-        return $this;
-    }
 
     /**
      * @return Collection<int, Sauce>
@@ -246,4 +229,35 @@ class Produit
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Ingredient>
+     */
+    public function getIngredients(): Collection
+{
+    return $this->ingredients;
+}
+
+public function addIngredient(Ingredient $ingredient): static
+{
+    if (!$this->ingredients->contains($ingredient)) {
+        $this->ingredients->add($ingredient);
+        $ingredient->setProduit($this);
+    }
+
+    return $this;
+}
+
+public function removeIngredient(Ingredient $ingredient): static
+{
+    if ($this->ingredients->removeElement($ingredient)) {
+        // set the owning side to null (unless already changed)
+        if ($ingredient->getProduit() === $this) {
+            $ingredient->setProduit(null);
+        }
+    }
+
+    return $this;
+}
+
 }

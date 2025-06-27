@@ -23,16 +23,12 @@ class Ingredient
     #[ORM\Column]
     private ?bool $disponible = null;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'ingredients')]
-    private Collection $produit;
+    #[ORM\ManyToOne(inversedBy: 'produit')]
+    private ?Produit $produit = null;
 
-    public function __construct()
-    {
-        $this->produit = new ArrayCollection();
-    }
+  
+
+  
 
     public function getId(): ?int
     {
@@ -63,27 +59,18 @@ class Ingredient
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduit(): Collection
+    public function getProduit(): ?Produit
     {
         return $this->produit;
     }
 
-    public function addProduit(Produit $produit): static
+    public function setProduit(?Produit $produit): static
     {
-        if (!$this->produit->contains($produit)) {
-            $this->produit->add($produit);
-        }
+        $this->produit = $produit;
 
         return $this;
     }
 
-    public function removeProduit(Produit $produit): static
-    {
-        $this->produit->removeElement($produit);
-
-        return $this;
-    }
+   
+    
 }
