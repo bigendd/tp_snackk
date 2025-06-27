@@ -3,14 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\IngredientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\SauceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: IngredientRepository::class)]
+#[ORM\Entity(repositoryClass: SauceRepository::class)]
 #[ApiResource]
-class Ingredient
+class Sauce
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,16 +21,11 @@ class Ingredient
     #[ORM\Column]
     private ?bool $disponible = null;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'ingredients')]
-    private Collection $produit;
+    #[ORM\Column]
+    private ?float $prix_suppl = null;
 
-    public function __construct()
-    {
-        $this->produit = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'sauce')]
+    private ?Produit $produit = null;
 
     public function getId(): ?int
     {
@@ -63,26 +56,26 @@ class Ingredient
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduit(): Collection
+    public function getPrixSuppl(): ?float
     {
-        return $this->produit;
+        return $this->prix_suppl;
     }
 
-    public function addProduit(Produit $produit): static
+    public function setPrixSuppl(float $prix_suppl): static
     {
-        if (!$this->produit->contains($produit)) {
-            $this->produit->add($produit);
-        }
+        $this->prix_suppl = $prix_suppl;
 
         return $this;
     }
 
-    public function removeProduit(Produit $produit): static
+    public function getProduit(): ?Produit
     {
-        $this->produit->removeElement($produit);
+        return $this->produit;
+    }
+
+    public function setProduit(?Produit $produit): static
+    {
+        $this->produit = $produit;
 
         return $this;
     }

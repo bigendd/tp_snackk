@@ -15,8 +15,23 @@ class CommandeInfo
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Commande $commande = null;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCommande(): ?Commande
+    {
+        return $this->commande;
+    }
+
+    public function setCommande(?Commande $commande): static
+    {
+        $this->commande = $commande;
+
+        return $this;
     }
 }

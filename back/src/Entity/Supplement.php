@@ -3,14 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\IngredientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\SupplementRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: IngredientRepository::class)]
+#[ORM\Entity(repositoryClass: SupplementRepository::class)]
 #[ApiResource]
-class Ingredient
+class Supplement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,16 +21,8 @@ class Ingredient
     #[ORM\Column]
     private ?bool $disponible = null;
 
-    /**
-     * @var Collection<int, Produit>
-     */
-    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'ingredients')]
-    private Collection $produit;
-
-    public function __construct()
-    {
-        $this->produit = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'supplement')]
+    private ?Produit $produit = null;
 
     public function getId(): ?int
     {
@@ -63,26 +53,14 @@ class Ingredient
         return $this;
     }
 
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduit(): Collection
+    public function getProduit(): ?Produit
     {
         return $this->produit;
     }
 
-    public function addProduit(Produit $produit): static
+    public function setProduit(?Produit $produit): static
     {
-        if (!$this->produit->contains($produit)) {
-            $this->produit->add($produit);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        $this->produit->removeElement($produit);
+        $this->produit = $produit;
 
         return $this;
     }
