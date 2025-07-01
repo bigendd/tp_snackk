@@ -1,4 +1,3 @@
-// dataProvider.js
 import { fetchUtils } from 'react-admin';
 
 const API_URL = 'http://localhost:8080/api';
@@ -23,7 +22,35 @@ const httpClient = (url, options = {}) => {
     return fetchUtils.fetchJson(url, options);
 };
 
-// Data provider personnalisé pour API Platform
+// Fonction utilitaire pour transformer les relations id en IRI
+const convertRelationsToIRI = (data) => {
+    const newData = { ...data };
+
+    Object.keys(newData).forEach(key => {
+        const value = newData[key];
+
+        // On ignore la clé id elle-même
+        if (key === 'id') return;
+
+        // Cas d'une relation simple : id (number or string)
+        if ((typeof value === 'number' || typeof value === 'string')) {
+            // Par convention, on considère que la clé correspond au nom de la ressource en singulier
+            // Tu peux modifier cette logique si besoin (ex : map spécifique)
+            const resourceName = key.endsWith('s') ? key : `${key}s`;
+
+            // Exemple: 'category' -> 'categories' -> '/api/categories/5'
+            newData[key] = `/api/${resourceName}/${value}`;
+        }
+        // Cas d'une relation multiple (tableau d'ids)
+        else if (Array.isArray(value)) {
+            const resourceName = key.endsWith('s') ? key : `${key}s`;
+            newData[key] = value.map(id => `/api/${resourceName}/${id}`);
+        }
+    });
+
+    return newData;
+};
+
 const dataProvider = {
     getList: (resource, params) => {
         const { page, perPage } = params.pagination;
@@ -35,7 +62,6 @@ const dataProvider = {
             itemsPerPage: perPage,
         };
 
-        // Gestion des filtres
         if (params.filter) {
             Object.keys(params.filter).forEach(key => {
                 query[key] = params.filter[key];
@@ -47,7 +73,6 @@ const dataProvider = {
         return httpClient(url).then(({ json }) => {
             console.log('getList response:', json);
             
-            // Vérification de la structure JSON-LD
             if (!json.member || !Array.isArray(json.member)) {
                 console.error('Invalid API response structure:', json);
                 throw new Error('Invalid API response structure');
@@ -111,9 +136,11 @@ const dataProvider = {
 
     create: (resource, params) => {
         const url = `${API_URL}/${resource}`;
+        const dataToSend = convertRelationsToIRI(params.data);
+
         return httpClient(url, {
             method: 'POST',
-            body: JSON.stringify(params.data),
+            body: JSON.stringify(dataToSend),
         }).then(({ json }) => ({
             data: { id: json.id, ...json }
         }));
@@ -121,9 +148,11 @@ const dataProvider = {
 
     update: (resource, params) => {
         const url = `${API_URL}/${resource}/${params.id}`;
+        const dataToSend = convertRelationsToIRI(params.data);
+
         return httpClient(url, {
             method: 'PUT',
-            body: JSON.stringify(params.data),
+            body: JSON.stringify(dataToSend),
         }).then(({ json }) => ({
             data: { id: json.id, ...json }
         }));

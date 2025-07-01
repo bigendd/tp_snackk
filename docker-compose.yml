@@ -48,7 +48,7 @@ services:
       - backend
   node:
     build:
-      context: ./front
+      context: ./admin-dashboard
       dockerfile: Dockerfile
     platform: linux/amd64
     container_name: react
