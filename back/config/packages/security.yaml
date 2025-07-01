@@ -28,7 +28,7 @@ security:
                 stateless: true
                 security: false  
         api:
-            pattern: ^/apid
+            pattern: ^/api
             stateless: true
             jwt: ~
             provider: app_user_provider
