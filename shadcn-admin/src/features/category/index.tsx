@@ -36,7 +36,6 @@ export default function Categories() {
     fetchCategories()
   }, [])
 
-  // fonction pour ajouter une catégorie dans la liste
   const handleCategoryCreated = (newCategory: Category) => {
     setCategoryList(prev => [newCategory, ...prev])
   }
