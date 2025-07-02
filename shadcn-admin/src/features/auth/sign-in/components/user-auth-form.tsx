@@ -1,8 +1,8 @@
-import { HTMLAttributes, useState } from 'react'
+import { HTMLAttributes, useState, useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,15 @@ import { PasswordInput } from '@/components/password-input'
 
 // Import de ta fonction login
 import { login } from '@/lib/api/auth'
+
+// Exemple simple de hook useAuth, adapte-le selon ta logique
+function useAuth() {
+  // Par exemple, regarde si un token est stocké
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+  return {
+    isAuthenticated: !!token,
+  }
+}
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -40,6 +49,15 @@ const formSchema = z.object({
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+
+  // Redirection automatique si utilisateur connecté
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: '/' })
+    }
+  }, [isAuthenticated, navigate])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,19 +73,24 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
     try {
       const result = await login(data.email, data.password)
-      // Exemple : stocker le token en localStorage ou dans un contexte global
+      // Stocke le token en localStorage
       localStorage.setItem('token', result.token)
 
       console.log('Login successful:', result)
-      // Ici tu peux rediriger l'utilisateur ou faire autre chose
+      // Redirection après connexion réussie
+      navigate({ to: '/' })
     } catch (error: any) {
-      // Gérer les erreurs de connexion (ex: 401, 500, etc)
       setErrorMessage(
         error.response?.data?.message || 'Login failed. Please try again.'
       )
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Si utilisateur connecté, on peut afficher un message ou rien du tout (car redirigé)
+  if (isAuthenticated) {
+    return <p>Redirecting...</p>
   }
 
   return (
@@ -109,10 +132,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             </FormItem>
           )}
         />
-        
-        {/* Affichage de l'erreur de login */}
+
         {errorMessage && (
-          <p className="text-sm text-red-600 mt-1">{errorMessage}</p>
+          <p className='text-sm text-red-600 mt-1'>{errorMessage}</p>
         )}
 
         <Button className='mt-2' disabled={isLoading}>

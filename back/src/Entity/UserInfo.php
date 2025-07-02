@@ -1,11 +1,14 @@
 <?php
 
 namespace App\Entity;
+use ApiPlatform\Metadata\ApiResource;
 
 use App\Repository\UserInfoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserInfoRepository::class)]
+#[ApiResource]
+
 class UserInfo
 {
     #[ORM\Id]

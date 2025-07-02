@@ -1,11 +1,9 @@
+// 📁 src/features/users/components/users-columns.tsx
 import { ColumnDef } from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import LongText from '@/components/long-text'
-import { callTypes, userTypes } from '../data/data'
 import { User } from '../data/schema'
-import { DataTableColumnHeader } from './data-table-column-header'
+import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
+import LongText from '@/components/long-text'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const columns: ColumnDef<User>[] = [
@@ -39,102 +37,50 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
   {
-    accessorKey: 'username',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Username' />
-    ),
-    cell: ({ row }) => (
-      <LongText className='max-w-36'>{row.getValue('username')}</LongText>
-    ),
-    meta: {
-      className: cn(
-        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)] lg:drop-shadow-none',
-        'bg-background transition-colors duration-200 group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-        'sticky left-6 md:table-cell'
-      ),
-    },
-    enableHiding: false,
-  },
-  {
-    id: 'fullName',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Name' />
-    ),
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original
-      const fullName = `${firstName} ${lastName}`
-      return <LongText className='max-w-36'>{fullName}</LongText>
-    },
-    meta: { className: 'w-36' },
+    accessorKey: 'id',
+    header: () => <div>ID</div>,
+    cell: ({ row }) => <div>{row.getValue('id')}</div>,
   },
   {
     accessorKey: 'email',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
-    ),
+    header: () => <div>Email</div>,
     cell: ({ row }) => (
       <div className='w-fit text-nowrap'>{row.getValue('email')}</div>
     ),
   },
   {
-    accessorKey: 'phoneNumber',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Phone Number' />
-    ),
-    cell: ({ row }) => <div>{row.getValue('phoneNumber')}</div>,
-    enableSorting: false,
+    accessorKey: 'userIdentifier',
+    header: () => <div>User Identifier</div>,
+    cell: ({ row }) => <div>{row.getValue('userIdentifier')}</div>,
   },
   {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Status' />
-    ),
+    accessorKey: 'roles',
+    header: () => <div>Roles</div>,
     cell: ({ row }) => {
-      const { status } = row.original
-      const badgeColor = callTypes.get(status)
+      const roles: string[] = row.getValue('roles')
       return (
-        <div className='flex space-x-2'>
-          <Badge variant='outline' className={cn('capitalize', badgeColor)}>
-            {row.getValue('status')}
-          </Badge>
+        <div className='flex flex-wrap gap-1'>
+          {roles.map((role) => (
+            <span
+              key={role}
+              className='rounded bg-muted px-2 py-0.5 text-xs font-medium'
+            >
+              {role.replace('ROLE_', '').toLowerCase()}
+            </span>
+          ))}
         </div>
       )
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
-    enableHiding: false,
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'role',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Role' />
-    ),
-    cell: ({ row }) => {
-      const { role } = row.original
-      const userType = userTypes.find(({ value }) => value === role)
-
-      if (!userType) {
-        return null
-      }
-
-      return (
-        <div className='flex items-center gap-x-2'>
-          {userType.icon && (
-            <userType.icon size={16} className='text-muted-foreground' />
-          )}
-          <span className='text-sm capitalize'>{row.getValue('role')}</span>
-        </div>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
+      const roles: string[] = row.getValue(id)
+      return roles.some((role) => value.includes(role))
     },
     enableSorting: false,
     enableHiding: false,
   },
+
   {
     id: 'actions',
     cell: DataTableRowActions,
