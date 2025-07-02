@@ -7,6 +7,7 @@ use App\Enum\ModeConsommation;
 use App\Enum\MoyenDePaiment;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Produit
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource]
@@ -97,6 +98,27 @@ class Commande
 
         return $this;
     }
+/**
+     * @return Collection<int, Produit>
+     */
+    public function getProduits(): Collection
+    {
+        return $this->produits;
+    }
 
+    public function addProduit(Produit $produit): self
+    {
+        if (!$this->produits->contains($produit)) {
+            $this->produits[] = $produit;
+        }
 
+        return $this;
+    }
+
+    public function removeProduit(Produit $produit): self
+    {
+        $this->produits->removeElement($produit);
+
+        return $this;
+    }
 }

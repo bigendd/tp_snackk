@@ -11,25 +11,32 @@ export async function getCommande(): Promise<Commande[]> {
   }
 }
 
-export async function createCommande(commande: Omit<Commande, 'id' | '@id' | '@type'>): Promise<Commande | null> {
+export async function createCommande(commande: {
+  nom: string
+  disponible: boolean
+  produits: string[] // liste des IRI des produits
+}): Promise<Commande | null> {
   try {
-    
     const payload = {
       '@context': '/api/contexts/Commande',
-      ...commande,
-    };
+      nom: commande.nom,
+      disponible: commande.disponible,
+      produits: commande.produits, // envoie les IRI des produits
+    }
 
-    const response = await apiClient.post('/commande', payload, {
+    const response = await apiClient.post('/commandes', payload, {
       headers: {
-        'Content-Type': 'application/ld+json',  
+        'Content-Type': 'application/ld+json',
       },
-    });
-    return response.data;
+    })
+
+    return response.data
   } catch (error) {
-    console.error('Erreur lors de la création de la commande :', error);
-    return null;
+    console.error('Erreur lors de la création de la commande :', error)
+    return null
   }
 }
+
 
 
 export async function updateCommande(id: number, commande: Partial<Omit<Commande, 'id' | '@id' | '@type'>>): Promise<Commande | null> {
@@ -52,7 +59,7 @@ export async function deleteCommande(id: number): Promise<boolean> {
   }
 }
 
-export async function getCommandes(id: string): Promise<Commande | null> {
+export async function getCommandes(id: number): Promise<Commande | null> {
   try {
     const response = await apiClient.get(`/commande/${id}`)
     return response.data
