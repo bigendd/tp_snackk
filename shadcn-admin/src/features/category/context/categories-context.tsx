@@ -8,7 +8,7 @@ interface Category {
   disponible: boolean
 }
 
-type CategoriesDialogType = 'add' | 'edit' | 'delete'
+type CategoriesDialogType = 'add' | 'edit' | 'delete' | 'show'
 
 interface CategoriesContextType {
   open: CategoriesDialogType | null

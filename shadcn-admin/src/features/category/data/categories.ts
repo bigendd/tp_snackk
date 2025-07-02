@@ -34,7 +34,16 @@ export async function createCategory(category: Omit<Category, 'id' | '@id' | '@t
 
 export async function updateCategory(id: number, category: Partial<Omit<Category, 'id' | '@id' | '@type'>>): Promise<Category | null> {
   try {
-    const response = await apiClient.put(`/categories/${id}`, category)
+    const payload = {
+      '@context': '/api/contexts/Category',
+      ...category,
+    };
+    const response = await apiClient.put(`/categories/${id}`, payload, {
+      headers: {
+        'Content-Type': 'application/ld+json',  // Surcharge ici le content-type pour JSON-LD
+      },
+    }
+    )
     return response.data
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la catégorie :', error)
@@ -44,13 +53,19 @@ export async function updateCategory(id: number, category: Partial<Omit<Category
 
 export async function deleteCategory(id: number): Promise<boolean> {
   try {
-    await apiClient.delete(`/categories/${id}`)
+    await apiClient.delete(`/categories/${id}`, {
+      headers: {
+        'Content-Type': 'application/ld+json',
+      },
+    })
+
     return true
   } catch (error) {
     console.error('Erreur lors de la suppression de la catégorie :', error)
     return false
   }
 }
+
 
 export async function getCategory(id: number): Promise<Category | null> {
   try {
