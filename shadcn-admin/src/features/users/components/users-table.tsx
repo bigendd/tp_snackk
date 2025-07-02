@@ -9,7 +9,6 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableFacetedFilter } from './data-table-faceted-filter'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 
