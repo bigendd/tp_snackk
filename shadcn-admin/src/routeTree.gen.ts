@@ -28,6 +28,8 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSaucesIndexRouteImport } from './routes/_authenticated/sauces/index'
+import { Route as AuthenticatedProduitsIndexRouteImport } from './routes/_authenticated/produits/index'
 import { Route as AuthenticatedCommandeIndexRouteImport } from './routes/_authenticated/commande/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as ClerkAuthenticatedUserManagementRouteImport } from './routes/clerk/_authenticated/user-management'
@@ -134,6 +136,18 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedSaucesIndexRoute =
+  AuthenticatedSaucesIndexRouteImport.update({
+    id: '/sauces/',
+    path: '/sauces/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProduitsIndexRoute =
+  AuthenticatedProduitsIndexRouteImport.update({
+    id: '/produits/',
+    path: '/produits/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCommandeIndexRoute =
   AuthenticatedCommandeIndexRouteImport.update({
     id: '/commande/',
@@ -224,6 +238,8 @@ export interface FileRoutesByFullPath {
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/commande': typeof AuthenticatedCommandeIndexRoute
+  '/produits': typeof AuthenticatedProduitsIndexRoute
+  '/sauces': typeof AuthenticatedSaucesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -252,6 +268,8 @@ export interface FileRoutesByTo {
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/commande': typeof AuthenticatedCommandeIndexRoute
+  '/produits': typeof AuthenticatedProduitsIndexRoute
+  '/sauces': typeof AuthenticatedSaucesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -285,6 +303,8 @@ export interface FileRoutesById {
   '/clerk/_authenticated/user-management': typeof ClerkAuthenticatedUserManagementRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/commande/': typeof AuthenticatedCommandeIndexRoute
+  '/_authenticated/produits/': typeof AuthenticatedProduitsIndexRoute
+  '/_authenticated/sauces/': typeof AuthenticatedSaucesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -317,6 +337,8 @@ export interface FileRouteTypes {
     | '/clerk/user-management'
     | '/categories'
     | '/commande'
+    | '/produits'
+    | '/sauces'
     | '/settings/'
     | '/tasks'
     | '/users'
@@ -345,6 +367,8 @@ export interface FileRouteTypes {
     | '/clerk/user-management'
     | '/categories'
     | '/commande'
+    | '/produits'
+    | '/sauces'
     | '/settings'
     | '/tasks'
     | '/users'
@@ -377,6 +401,8 @@ export interface FileRouteTypes {
     | '/clerk/_authenticated/user-management'
     | '/_authenticated/categories/'
     | '/_authenticated/commande/'
+    | '/_authenticated/produits/'
+    | '/_authenticated/sauces/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
@@ -532,6 +558,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/sauces/': {
+      id: '/_authenticated/sauces/'
+      path: '/sauces'
+      fullPath: '/sauces'
+      preLoaderRoute: typeof AuthenticatedSaucesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/produits/': {
+      id: '/_authenticated/produits/'
+      path: '/produits'
+      fullPath: '/produits'
+      preLoaderRoute: typeof AuthenticatedProduitsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/commande/': {
       id: '/_authenticated/commande/'
       path: '/commande'
@@ -642,6 +682,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCommandeIdRoute: typeof AuthenticatedCommandeIdRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedCommandeIndexRoute: typeof AuthenticatedCommandeIndexRoute
+  AuthenticatedProduitsIndexRoute: typeof AuthenticatedProduitsIndexRoute
+  AuthenticatedSaucesIndexRoute: typeof AuthenticatedSaucesIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
@@ -653,6 +695,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCommandeIdRoute: AuthenticatedCommandeIdRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedCommandeIndexRoute: AuthenticatedCommandeIndexRoute,
+  AuthenticatedProduitsIndexRoute: AuthenticatedProduitsIndexRoute,
+  AuthenticatedSaucesIndexRoute: AuthenticatedSaucesIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }

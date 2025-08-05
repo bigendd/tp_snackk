@@ -11,12 +11,12 @@ import { columns } from './components/commande-columns.tsx'
 import { CommandeDialogs } from './components/commande-dialogs.tsx'
 import { CommandeTable } from './components/data-table.tsx'
 import CommandeProvider from './context/commande-context'
-import { commandeListSchema, Commande } from './data/schema'
+import { commandeListSchema, Commande as CommandeType } from './data/schema'
 import { getCommande } from './data/commande'
 import { AddCommandeButton } from './components/add-commande'
 
 export default function Commande() {
-  const [commandeList, setCommandeList] = useState<Commande[]>([])
+  const [commandeList, setCommandeList] = useState<CommandeType[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Commande() {
     fetchCommande()
   }, [])
 
-  const handleCommandeCreated = (newCommande: Commande) => {
+  const handleCommandeCreated = (newCommande: CommandeType) => {
     setCommandeList(prev => [newCommande, ...prev])
   }
 
