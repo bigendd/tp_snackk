@@ -1,11 +1,11 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Produit, Category } from '../data/schema'
+import { ColumnDef } from '@tanstack/react-table' 
+import { Produit, Ingredient } from '../data/schema'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export function getColumns(categories: Category[]): ColumnDef<Produit>[] {
+export function getColumns(produits: Produit[]): ColumnDef<Ingredient>[] {
   return [
     {
       id: 'select',
@@ -16,8 +16,8 @@ export function getColumns(categories: Category[]): ColumnDef<Produit>[] {
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Sélectionner tout'
-          className='translate-y-[2px]'
+          aria-label="Sélectionner tout"
+          className="translate-y-[2px]"
         />
       ),
       meta: {
@@ -30,8 +30,8 @@ export function getColumns(categories: Category[]): ColumnDef<Produit>[] {
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Sélectionner la ligne'
-          className='translate-y-[2px]'
+          aria-label="Sélectionner la ligne"
+          className="translate-y-[2px]"
         />
       ),
       enableSorting: false,
@@ -46,7 +46,7 @@ export function getColumns(categories: Category[]): ColumnDef<Produit>[] {
       accessorKey: 'nom',
       header: () => <div>Nom</div>,
       cell: ({ row }) => (
-        <div className='w-fit text-nowrap font-medium'>{row.getValue('nom')}</div>
+        <div className="w-fit text-nowrap font-medium">{row.getValue('nom')}</div>
       ),
     },
     {
@@ -74,34 +74,27 @@ export function getColumns(categories: Category[]): ColumnDef<Produit>[] {
       },
     },
     {
-      accessorKey: 'description',
-      header: () => <div>Description</div>,
-      cell: ({ row }) => (
-        <div className='max-w-xs truncate'>{row.getValue('description')}</div>
-      ),
-    },
-    {
-      accessorKey: 'prix_base',
-      header: () => <div>Prix de base</div>,
-      cell: ({ row }) => (
-        <div>{(row.getValue('prix_base') as number).toFixed(2)} €</div>
-      ),
-    },
-    {
-      accessorKey: 'category',
-      header: () => <div>Catégorie</div>,
+      accessorKey: 'produit',
+      header: () => <div>Produit</div>,
       cell: ({ row }) => {
-        const categoryUrl = row.getValue('category') as string | null | undefined
-        if (!categoryUrl) return <div>—</div>
+        const produitField = row.getValue('produit')
 
-        // Extraction de l'id depuis l'URL de la catégorie (ex: "/api/categories/12")
-        const match = categoryUrl.match(/\/(\d+)$/)
-        if (!match) return <div>—</div>
+        // Si produit est un URI (string)
+        if (typeof produitField === 'string') {
+          const match = produitField.match(/\/(\d+)$/)
+          if (!match) return <div>—</div>
 
-        const id = parseInt(match[1], 10)
-        const category = categories.find((c) => c.id === id)
+          const id = parseInt(match[1], 10)
+          const produit = produits.find((p) => p.id === id)
+          return produit ? <div>{produit.nom}</div> : <div>—</div>
+        }
 
-        return category ? <div>{category.nom}</div> : <div>—</div>
+        // Si produit est un objet complet
+        if (typeof produitField === 'object' && produitField !== null && 'nom' in produitField) {
+          return <div>{(produitField as Produit).nom}</div>
+        }
+
+        return <div>—</div>
       },
     },
     {

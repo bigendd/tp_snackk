@@ -12,19 +12,19 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useProducts } from '../context/produits-context'  // adapté pour produit
-import { Produit } from '../data/schema'                    // type Produit
-import { deleteProduit } from '../data/produits'            // fonction deleteProduit
+import { useProduits } from '../context/produits-context' // adapté pour produit
+import { Produit } from '../data/schema'                  // type Produit
+import { deleteProduit } from '../data/produits'          // fonction deleteProduit
 
 interface DataTableRowActionsProps {
   row: Row<Produit>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useProducts()
+  const { setOpen, setCurrentRow } = useProduits()
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(`Supprimer le produit "${row.original.nom}" ?`)
+    const confirmed = window.confirm(`Supprimer le Produit "${row.original.nom}" ?`)
     if (!confirmed) return
 
     const success = await deleteProduit(row.original.id!)

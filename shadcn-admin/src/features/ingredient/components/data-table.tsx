@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { Produit } from '../data/schema'  // importe ton type Produit
+import { Produit } from '../data/schema' // importe ton type Produit
 
 type ProduitsTableProps = {
   columns: ColumnDef<Produit, any>[]
