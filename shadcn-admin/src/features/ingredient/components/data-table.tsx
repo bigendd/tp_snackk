@@ -15,14 +15,15 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { Produit } from '../data/schema' // importe ton type Produit
+import { ColumnDef } from '@tanstack/react-table'
+import { Ingredient, Produit } from '../data/schema'
 
-type ProduitsTableProps = {
-  columns: ColumnDef<Produit, any>[]
+type IngredientsTableProps = {
+  columns: ColumnDef<Ingredient, any>[]
   data: Produit[]
 }
 
-export function ProduitsTable({ columns, data }: ProduitsTableProps) {
+export function IngredientsTable({ columns, data }: ProduitsTableProps) {
   const table = useReactTable({
     data,
     columns,

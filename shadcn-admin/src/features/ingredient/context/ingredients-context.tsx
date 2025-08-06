@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 
-// Interface pour votre entité Product
+// Interface pour votre entité Ingredient
 interface Ingredient {
   id?: number
   nom: string
