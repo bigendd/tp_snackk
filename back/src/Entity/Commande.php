@@ -7,7 +7,9 @@ use App\Enum\ModeConsommation;
 use App\Enum\MoyenDePaiment;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Produit
+use App\Entity\Produit;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource]
@@ -32,6 +34,9 @@ class Commande
 
     #[ORM\ManyToOne(inversedBy: 'commande')]
     private ?User $user = null;
+
+    #[ORM\ManyToMany(targetEntity: Produit::class)]
+    private Collection $produits;
 
 
     public function getId(): ?int
