@@ -25,8 +25,10 @@ import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-p
 import { Route as ClerkAuthenticatedRouteRouteImport } from './routes/clerk/_authenticated/route'
 import { Route as ClerkauthRouteRouteImport } from './routes/clerk/(auth)/route'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
+import { Route as AuthenticatedViandesIndexRouteImport } from './routes/_authenticated/viandes/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedSupplementsIndexRouteImport } from './routes/_authenticated/supplements/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSaucesIndexRouteImport } from './routes/_authenticated/sauces/index'
 import { Route as AuthenticatedProduitsIndexRouteImport } from './routes/_authenticated/produits/index'
@@ -121,6 +123,12 @@ const AuthenticatedSettingsRouteRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedViandesIndexRoute =
+  AuthenticatedViandesIndexRouteImport.update({
+    id: '/viandes/',
+    path: '/viandes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -131,6 +139,12 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSupplementsIndexRoute =
+  AuthenticatedSupplementsIndexRouteImport.update({
+    id: '/supplements/',
+    path: '/supplements/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
     id: '/',
@@ -249,8 +263,10 @@ export interface FileRoutesByFullPath {
   '/produits': typeof AuthenticatedProduitsIndexRoute
   '/sauces': typeof AuthenticatedSaucesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/supplements': typeof AuthenticatedSupplementsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/viandes': typeof AuthenticatedViandesIndexRoute
 }
 export interface FileRoutesByTo {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
@@ -280,8 +296,10 @@ export interface FileRoutesByTo {
   '/produits': typeof AuthenticatedProduitsIndexRoute
   '/sauces': typeof AuthenticatedSaucesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/supplements': typeof AuthenticatedSupplementsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/viandes': typeof AuthenticatedViandesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -316,8 +334,10 @@ export interface FileRoutesById {
   '/_authenticated/produits/': typeof AuthenticatedProduitsIndexRoute
   '/_authenticated/sauces/': typeof AuthenticatedSaucesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/supplements/': typeof AuthenticatedSupplementsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/viandes/': typeof AuthenticatedViandesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -351,8 +371,10 @@ export interface FileRouteTypes {
     | '/produits'
     | '/sauces'
     | '/settings/'
+    | '/supplements'
     | '/tasks'
     | '/users'
+    | '/viandes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/clerk'
@@ -382,8 +404,10 @@ export interface FileRouteTypes {
     | '/produits'
     | '/sauces'
     | '/settings'
+    | '/supplements'
     | '/tasks'
     | '/users'
+    | '/viandes'
   id:
     | '__root__'
     | '/_authenticated'
@@ -417,8 +441,10 @@ export interface FileRouteTypes {
     | '/_authenticated/produits/'
     | '/_authenticated/sauces/'
     | '/_authenticated/settings/'
+    | '/_authenticated/supplements/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/viandes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -550,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/viandes/': {
+      id: '/_authenticated/viandes/'
+      path: '/viandes'
+      fullPath: '/viandes'
+      preLoaderRoute: typeof AuthenticatedViandesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -562,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplements/': {
+      id: '/_authenticated/supplements/'
+      path: '/supplements'
+      fullPath: '/supplements'
+      preLoaderRoute: typeof AuthenticatedSupplementsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/': {
@@ -705,8 +745,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIngredientsIndexRoute: typeof AuthenticatedIngredientsIndexRoute
   AuthenticatedProduitsIndexRoute: typeof AuthenticatedProduitsIndexRoute
   AuthenticatedSaucesIndexRoute: typeof AuthenticatedSaucesIndexRoute
+  AuthenticatedSupplementsIndexRoute: typeof AuthenticatedSupplementsIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedViandesIndexRoute: typeof AuthenticatedViandesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -719,8 +761,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIngredientsIndexRoute: AuthenticatedIngredientsIndexRoute,
   AuthenticatedProduitsIndexRoute: AuthenticatedProduitsIndexRoute,
   AuthenticatedSaucesIndexRoute: AuthenticatedSaucesIndexRoute,
+  AuthenticatedSupplementsIndexRoute: AuthenticatedSupplementsIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedViandesIndexRoute: AuthenticatedViandesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
