@@ -7,21 +7,21 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { Produit } from '../data/schema'
+import { Viande } from '../data/schema'
 
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentRow: Produit
+  currentRow: Viande
 }
 
-export function ProductsDeleteDialog({ open, onOpenChange, currentRow }: Props) {
+export function ViandesDeleteDialog({ open, onOpenChange, currentRow }: Props) {
   const [value, setValue] = useState('')
 
   const handleDelete = () => {
     if (value.trim() !== currentRow.nom) return
     onOpenChange(false)
-    showSubmittedData(currentRow, 'Le produit suivant a été supprimé :')
+    showSubmittedData(currentRow, 'La viande suivante a été supprimée :')
   }
 
   return (
@@ -36,7 +36,7 @@ export function ProductsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
             className='stroke-destructive mr-1 inline-block'
             size={18}
           />{' '}
-          Supprimer le produit
+          Supprimer la viande
         </span>
       }
       desc={
@@ -45,16 +45,16 @@ export function ProductsDeleteDialog({ open, onOpenChange, currentRow }: Props) 
             Êtes-vous sûr de vouloir supprimer{' '}
             <span className='font-bold'>{currentRow.nom}</span> ?
             <br />
-            Cette action supprimera définitivement le produit{' '}
+            Cette action supprimera définitivement la viande{' '}
             {currentRow.disponible ? '(actuellement disponible)' : '(actuellement indisponible)'}{' '}
             du système. Cette action ne peut pas être annulée.
           </p>
           <Label className='my-2'>
-            Nom du produit :
+            Nom de la viande :
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder='Saisissez le nom du produit pour confirmer la suppression.'
+              placeholder='Saisissez le nom de la viande pour confirmer la suppression.'
             />
           </Label>
           <Alert variant='destructive'>

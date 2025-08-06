@@ -1,111 +1,75 @@
-import { Produit } from './schema'  // adapte le chemin si besoin
 import apiClient from '@/lib/api/apiClient'
-import type { ProduitCreate } from './schema'
-import { produitSchema } from './schema'
+import { Supplement, supplementSchema, SupplementCreate } from './schema'
 
-
-// Récupérer la liste des produits
-export async function getProduits(): Promise<Produit[]> {
+export async function getSupplements(): Promise<Supplement[]> {
   try {
-    const response = await apiClient.get('/produits')
+    const response = await apiClient.get('/supplements')
     const data = response.data
 
     if (Array.isArray(data.member)) {
-      // On valide chaque produit et on filtre les invalides en loggant l'erreur
-      const produits: Produit[] = []
-
-      data.member.forEach((prod: unknown, index: number) => {
-        try {
-          const validProduit = produitSchema.parse(prod)
-          produits.push(validProduit)
-        } catch (err) {
-          console.error(`Produit à l'index ${index} invalide :`, err)
-        }
-      })
-
-      return produits
+      return data.member.map((item: any) => supplementSchema.parse(item))
     }
-
-    console.error('Format inattendu pour les produits', data)
+    console.error('Format inattendu pour les supplements', data)
     return []
   } catch (error) {
-    console.error('Erreur lors du chargement des produits :', error)
+    console.error('Erreur lors du chargement des supplements :', error)
     return []
   }
 }
 
-
-
-// Récupérer un produit par son id
-export async function getProduit(id: number): Promise<Produit | null> {
+export async function getSupplement(id: number): Promise<Supplement | null> {
   try {
-    const response = await apiClient.get(`/produits/${id}`)
-    return response.data
+    const response = await apiClient.get(`/supplements/${id}`)
+    return supplementSchema.parse(response.data)
   } catch (error) {
-    console.error(`Erreur lors du chargement du produit ${id} :`, error)
+    console.error(`Erreur lors du chargement du supplement ${id} :`, error)
     return null
   }
 }
 
-
-export async function createProduit(data: ProduitCreate): Promise<Produit | null> {
+export async function createSupplement(data: SupplementCreate): Promise<Supplement | null> {
   try {
-    // Prépare le payload avec le contexte JSON-LD
     const payload = {
-      '@context': '/api/contexts/Produit',
+      '@context': '/api/contexts/Supplement',
       ...data,
     }
-
-    const response = await apiClient.post('/produits', payload, {
-      headers: {
-        'Content-Type': 'application/ld+json',
-      },
+    const response = await apiClient.post('/supplements', payload, {
+      headers: { 'Content-Type': 'application/ld+json' },
     })
-
-    return response.data as Produit
+    return supplementSchema.parse(response.data)
   } catch (error: any) {
-    console.error('Erreur lors de la création du produit :', error.response?.data || error.message || error)
+    console.error('Erreur lors de la création du supplement :', error.response?.data || error.message)
     return null
   }
 }
 
-
-// Mettre à jour un produit
-export async function updateProduit(
+export async function updateSupplement(
   id: number,
-  produit: Partial<Omit<Produit, 'id' | '@id' | '@type'>>
-): Promise<Produit | null> {
+  supplement: Partial<Omit<Supplement, 'id' | '@id' | '@type'>>
+): Promise<Supplement | null> {
   try {
     const payload = {
-      '@context': '/api/contexts/Produit',
-      ...produit,
+      '@context': '/api/contexts/Supplement',
+      ...supplement,
     }
-
-    const response = await apiClient.put(`/produits/${id}`, payload, {
-      headers: {
-        'Content-Type': 'application/ld+json',
-      },
+    const response = await apiClient.put(`/supplements/${id}`, payload, {
+      headers: { 'Content-Type': 'application/ld+json' },
     })
-
-    return response.data
+    return supplementSchema.parse(response.data)
   } catch (error) {
-    console.error(`Erreur lors de la mise à jour du produit ${id} :`, error)
+    console.error(`Erreur lors de la mise à jour du supplement ${id} :`, error)
     return null
   }
 }
 
-// Supprimer un produit
-export async function deleteProduit(id: number): Promise<boolean> {
+export async function deleteSupplement(id: number): Promise<boolean> {
   try {
-    await apiClient.delete(`/produits/${id}`, {
-      headers: {
-        'Content-Type': 'application/ld+json',
-      },
+    await apiClient.delete(`/supplements/${id}`, {
+      headers: { 'Content-Type': 'application/ld+json' },
     })
-
     return true
   } catch (error) {
-    console.error(`Erreur lors de la suppression du produit ${id} :`, error)
+    console.error(`Erreur lors de la suppression du supplement ${id} :`, error)
     return false
   }
 }

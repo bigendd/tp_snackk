@@ -12,26 +12,31 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useProducts } from '../context/produits-context'  // adapté pour produit
-import { Produit } from '../data/schema'                    // type Produit
-import { deleteProduit } from '../data/produits'            // fonction deleteProduit
+import { useViandes } from '../context/viandes-context'  // adapté pour viande
+import { Viande } from '../data/schema'                   // type Viande
+import { deleteViande } from '../data/viandes'            // fonction deleteViande
 
 interface DataTableRowActionsProps {
-  row: Row<Produit>
+  row: Row<Viande>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentRow } = useProducts()
+  const { setOpen, setCurrentRow } = useViandes()
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(`Supprimer le produit "${row.original.nom}" ?`)
+    const confirmed = window.confirm(`Supprimer la viande "${row.original.nom}" ?`)
     if (!confirmed) return
 
-    const success = await deleteProduit(row.original.id!)
-    if (success) {
-      window.location.reload()
-    } else {
-      alert('Erreur lors de la suppression.')
+    try {
+      const success = await deleteViande(row.original.id!)
+      if (success) {
+        // tu peux remplacer reload par une mise à jour contextuelle plus propre
+        window.location.reload()
+      } else {
+        alert('Erreur lors de la suppression.')
+      }
+    } catch (error) {
+      alert('Erreur inattendue lors de la suppression.')
     }
   }
 
@@ -43,7 +48,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
         >
           <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">Ouvrir le menu</span>
         </Button>
       </DropdownMenuTrigger>
 
@@ -54,7 +59,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setOpen('show')
           }}
         >
-          Show
+          Afficher
           <DropdownMenuShortcut>
             <IconEye size={16} />
           </DropdownMenuShortcut>
@@ -66,7 +71,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setOpen('edit')
           }}
         >
-          Edit
+          Modifier
           <DropdownMenuShortcut>
             <IconEdit size={16} />
           </DropdownMenuShortcut>
@@ -78,7 +83,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           onClick={handleDelete}
           className="text-red-500"
         >
-          Delete
+          Supprimer
           <DropdownMenuShortcut>
             <IconTrash size={16} />
           </DropdownMenuShortcut>

@@ -1,10 +1,14 @@
-import { useProducts } from '../context/produits-context'
-import { ProductActionDialog } from './produits-action-dialog'
+import { useSupplements } from '../context/supplements-context'
+import { SupplementActionDialog } from './supplements-action-dialog'
+import { Produit } from '@/features/products/data/schema'
 
-export function ProductsDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useProducts()
+interface Props {
+  produits: Produit[] // ⚠️ Prop obligatoire
+}
 
-  // Fonction pour fermer la dialog et réinitialiser currentRow
+export function SupplementsDialogs({ produits }: Props) {
+  const { open, setOpen, currentRow, setCurrentRow } = useSupplements()
+
   function handleClose() {
     setOpen(null)
     setCurrentRow(null)
@@ -12,24 +16,23 @@ export function ProductsDialogs() {
 
   return (
     <>
-      <ProductActionDialog
-        key='product-add'
+      <SupplementActionDialog
+        key="supplement-add"
         open={open === 'add'}
+        produits={produits}
         onOpenChange={(isOpen) => {
           if (!isOpen) handleClose()
         }}
       />
       {currentRow && (
-        <>
-          <ProductActionDialog
-            key={`product-edit-${currentRow.id}`}
-            open={open === 'edit'}
-            currentRow={currentRow}
-            onOpenChange={(isOpen) => {
-              if (!isOpen) handleClose()
-            }}
-          />
-        </>
+        <SupplementActionDialog
+          key={`supplement-edit-${currentRow.id}`}
+          open={open === 'edit'}
+          produits={produits}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) handleClose()
+          }}
+        />
       )}
     </>
   )

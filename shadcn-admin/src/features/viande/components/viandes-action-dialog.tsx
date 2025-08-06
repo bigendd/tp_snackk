@@ -22,62 +22,65 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useState } from 'react'
-import { updateProduit } from '../data/produits' // adapte le chemin
-// import { createProduct } from '../api/products' // si tu as une fonction création
+import { updateViande, createViande } from '../data/viandes'
+import { Produit } from '@/features/products/data/schema'
 
 const formSchema = z.object({
   nom: z.string().min(1, { message: 'Le nom est requis.' }),
   disponible: z.boolean(),
+  prix_suppl: z.number({ invalid_type_error: 'Un prix est requis.' }),
+  produit: z.string().nonempty({ message: 'Le produit est requis.' }),
 })
 
-type ProductForm = z.infer<typeof formSchema>
+type ViandeForm = z.infer<typeof formSchema>
 
-interface Product {
-  id?: number
-  nom: string
-  disponible: boolean
-}
+import { Viande } from '../data/schema'
 
 interface Props {
-  currentRow?: Product
+  currentRow?: Viande
+  produits: Produit[]
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function ProductActionDialog({ currentRow, open, onOpenChange }: Props) {
+export function ViandeActionDialog({ currentRow, produits, open, onOpenChange }: Props) {
   const isEdit = !!currentRow
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<ProductForm>({
+  const form = useForm<ViandeForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
           nom: currentRow!.nom,
           disponible: currentRow!.disponible,
+          prix_suppl: currentRow!.prix_suppl,
+          produit: typeof currentRow!.produit === 'string' ? currentRow!.produit : '',
         }
       : {
           nom: '',
           disponible: true,
+          prix_suppl: 0,
+          produit: '',
         },
   })
 
-  const onSubmit = async (values: ProductForm) => {
+  const onSubmit = async (values: ViandeForm) => {
     setLoading(true)
     setError(null)
     try {
       if (isEdit && currentRow?.id) {
-        const updated = await updateProduit(currentRow.id, values)
+        const updated = await updateViande(currentRow.id, values)
         if (!updated) throw new Error('Erreur lors de la mise à jour')
-        window.location.reload()
       } else {
-        // Exemple d'ajout (à remplacer par ta vraie fonction createProduct)
-        // await createProduct(values)
-        console.log('Ajouter produit', values)
+        const created = await createViande(values)
+        if (!created) throw new Error('Erreur lors de la création')
       }
       form.reset()
       onOpenChange(false)
+      window.location.reload()
     } catch (err: any) {
       setError(err.message || 'Erreur inconnue')
     } finally {
@@ -98,45 +101,90 @@ export function ProductActionDialog({ currentRow, open, onOpenChange }: Props) {
     >
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-left">
-          <DialogTitle>{isEdit ? 'Modifier le produit' : 'Ajouter un nouveau produit'}</DialogTitle>
+          <DialogTitle>{isEdit ? 'Modifier la viande' : 'Ajouter une nouvelle viande'}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? 'Modifiez les informations du produit ici. '
-              : 'Créez un nouveau produit ici. '}
+              ? 'Modifiez les informations de la viande ici.'
+              : 'Créez une nouvelle viande ici.'}
             Cliquez sur sauvegarder quand vous avez terminé.
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           <Form {...form}>
-            <form id="product-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form id="viande-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Nom */}
               <FormField
                 control={form.control}
                 name="nom"
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-right">Nom</FormLabel>
+                  <FormItem>
+                    <FormLabel>Nom</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nom du produit" className="col-span-4" autoComplete="off" {...field} />
+                      <Input placeholder="Nom de la viande" autoComplete="off" {...field} />
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* Disponible */}
               <FormField
                 control={form.control}
                 name="disponible"
                 render={({ field }) => (
-                  <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-                    <FormLabel className="col-span-2 text-right">Disponible</FormLabel>
+                  <FormItem>
+                    <FormLabel>Disponible</FormLabel>
                     <FormControl>
-                      <div className="col-span-4 flex items-center">
+                      <div className="flex items-center space-x-3">
                         <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        <span className="ml-3 text-sm text-gray-600">{field.value ? 'Activé' : 'Désactivé'}</span>
+                        <span className="text-sm text-gray-600">
+                          {field.value ? 'Activée' : 'Désactivée'}
+                        </span>
                       </div>
                     </FormControl>
-                    <FormMessage className="col-span-4 col-start-3" />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Prix Supplémentaire */}
+              <FormField
+                control={form.control}
+                name="prix_suppl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prix supplémentaire (€)</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="0.01" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Produit */}
+              <FormField
+                control={form.control}
+                name="produit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Produit associé</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un produit" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {produits.map((produit) => (
+                          <SelectItem key={produit.id} value={`/api/produits/${produit.id}`}>
+                            {produit.nom}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -154,7 +202,7 @@ export function ProductActionDialog({ currentRow, open, onOpenChange }: Props) {
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
             Annuler
           </Button>
-          <Button type="submit" form="product-form" disabled={loading}>
+          <Button type="submit" form="viande-form" disabled={loading}>
             {loading ? 'En cours...' : isEdit ? 'Modifier' : 'Ajouter'}
           </Button>
         </DialogFooter>

@@ -1,10 +1,14 @@
-import { useProducts } from '../context/produits-context'
-import { ProductActionDialog } from './produits-action-dialog'
+import { useViandes } from '../context/viandes-context'
+import { ViandeActionDialog } from './viandes-action-dialog'
+import { Produit } from '@/features/products/data/schema'
 
-export function ProductsDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useProducts()
+interface Props {
+  produits: Produit[] // ⚠️ Prop obligatoire
+}
 
-  // Fonction pour fermer la dialog et réinitialiser currentRow
+export function ViandesDialogs({ produits }: Props) {
+  const { open, setOpen, currentRow, setCurrentRow } = useViandes()
+
   function handleClose() {
     setOpen(null)
     setCurrentRow(null)
@@ -12,24 +16,23 @@ export function ProductsDialogs() {
 
   return (
     <>
-      <ProductActionDialog
-        key='product-add'
+      <ViandeActionDialog
+        key="viande-add"
         open={open === 'add'}
+        produits={produits}
         onOpenChange={(isOpen) => {
           if (!isOpen) handleClose()
         }}
       />
       {currentRow && (
-        <>
-          <ProductActionDialog
-            key={`product-edit-${currentRow.id}`}
-            open={open === 'edit'}
-            currentRow={currentRow}
-            onOpenChange={(isOpen) => {
-              if (!isOpen) handleClose()
-            }}
-          />
-        </>
+        <ViandeActionDialog
+          key={`viande-edit-${currentRow.id}`}
+          open={open === 'edit'}
+          produits={produits}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) handleClose()
+          }}
+        />
       )}
     </>
   )

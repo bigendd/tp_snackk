@@ -1,68 +1,68 @@
-import { Produit } from './schema'  // adapte le chemin si besoin
+import { Viande } from './schema'  // adapte le chemin si besoin
 import apiClient from '@/lib/api/apiClient'
-import type { ProduitCreate } from './schema'
-import { produitSchema } from './schema'
+import type { ViandeCreate } from './schema'
+import { viandeSchema } from './schema'
 
 
-// Récupérer la liste des produits
-export async function getProduits(): Promise<Produit[]> {
+// Récupérer la liste des viandes
+export async function getViandes(): Promise<Viande[]> {
   try {
-    const response = await apiClient.get('/produits')
+    const response = await apiClient.get('/viandes')
     const data = response.data
 
     if (Array.isArray(data.member)) {
       // On valide chaque produit et on filtre les invalides en loggant l'erreur
-      const produits: Produit[] = []
+      const viandes: Viande[] = []
 
       data.member.forEach((prod: unknown, index: number) => {
         try {
-          const validProduit = produitSchema.parse(prod)
-          produits.push(validProduit)
+          const validViande = viandeSchema.parse(prod)
+          viandes.push(validViande)
         } catch (err) {
-          console.error(`Produit à l'index ${index} invalide :`, err)
+          console.error(`Viande à l'index ${index} invalide :`, err)
         }
       })
 
-      return produits
+      return viandes
     }
 
-    console.error('Format inattendu pour les produits', data)
+    console.error('Format inattendu pour les viandes', data)
     return []
   } catch (error) {
-    console.error('Erreur lors du chargement des produits :', error)
+    console.error('Erreur lors du chargement des Viandes :', error)
     return []
   }
 }
 
 
 
-// Récupérer un produit par son id
-export async function getProduit(id: number): Promise<Produit | null> {
+// Récupérer une viande par son id
+export async function getViande(id: number): Promise<Viande | null> {
   try {
-    const response = await apiClient.get(`/produits/${id}`)
+    const response = await apiClient.get(`/viandes/${id}`)
     return response.data
   } catch (error) {
-    console.error(`Erreur lors du chargement du produit ${id} :`, error)
+    console.error(`Erreur lors du chargement de la Viande ${id} :`, error)
     return null
   }
 }
 
 
-export async function createProduit(data: ProduitCreate): Promise<Produit | null> {
+export async function createViande(data: ViandeCreate): Promise<Viande | null> {
   try {
     // Prépare le payload avec le contexte JSON-LD
     const payload = {
-      '@context': '/api/contexts/Produit',
+      '@context': '/api/contexts/Viande',
       ...data,
     }
 
-    const response = await apiClient.post('/produits', payload, {
+    const response = await apiClient.post('/viandes', payload, {
       headers: {
         'Content-Type': 'application/ld+json',
       },
     })
 
-    return response.data as Produit
+    return response.data as Viande
   } catch (error: any) {
     console.error('Erreur lors de la création du produit :', error.response?.data || error.message || error)
     return null
@@ -70,18 +70,18 @@ export async function createProduit(data: ProduitCreate): Promise<Produit | null
 }
 
 
-// Mettre à jour un produit
-export async function updateProduit(
+// Mettre à jour une viande
+export async function updateViande(
   id: number,
-  produit: Partial<Omit<Produit, 'id' | '@id' | '@type'>>
-): Promise<Produit | null> {
+  viande: Partial<Omit<Viande, 'id' | '@id' | '@type'>>
+): Promise<Viande | null> {
   try {
     const payload = {
-      '@context': '/api/contexts/Produit',
-      ...produit,
+      '@context': '/api/contexts/Viande',
+      ...viande,
     }
 
-    const response = await apiClient.put(`/produits/${id}`, payload, {
+    const response = await apiClient.put(`/viandes/${id}`, payload, {
       headers: {
         'Content-Type': 'application/ld+json',
       },
@@ -94,10 +94,10 @@ export async function updateProduit(
   }
 }
 
-// Supprimer un produit
-export async function deleteProduit(id: number): Promise<boolean> {
+// Supprimer une Viande
+export async function deleteViande(id: number): Promise<boolean> {
   try {
-    await apiClient.delete(`/produits/${id}`, {
+    await apiClient.delete(`/viandes/${id}`, {
       headers: {
         'Content-Type': 'application/ld+json',
       },
@@ -105,7 +105,7 @@ export async function deleteProduit(id: number): Promise<boolean> {
 
     return true
   } catch (error) {
-    console.error(`Erreur lors de la suppression du produit ${id} :`, error)
+    console.error(`Erreur lors de la suppression de la Viande ${id} :`, error)
     return false
   }
 }

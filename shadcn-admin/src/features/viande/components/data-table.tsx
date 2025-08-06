@@ -15,14 +15,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { Produit } from '../data/schema'  // importe ton type Produit
+import { Viande } from '../data/schema'  // importe le type Viande
 
-type ProduitsTableProps = {
-  columns: ColumnDef<Produit, any>[]
-  data: Produit[]
+type ViandesTableProps = {
+  columns: ColumnDef<Viande, any>[]
+  data: Viande[]
 }
 
-export function ProduitsTable({ columns, data }: ProduitsTableProps) {
+export function ViandesTable({ columns, data }: ViandesTableProps) {
   const table = useReactTable({
     data,
     columns,
