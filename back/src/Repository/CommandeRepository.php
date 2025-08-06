@@ -40,4 +40,33 @@ class CommandeRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    
+    /**
+     * Récupère toutes les commandes avec leurs produits (et infos produit) en une requête
+     */
+    public function findAllWithProduits(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.commandeProduits', 'cp')
+            ->leftJoin('cp.produit', 'p')
+            ->addSelect('cp', 'p')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Récupère une commande spécifique avec ses produits
+     */
+    public function findOneWithProduits(int $id): ?Commande
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.commandeProduits', 'cp')
+            ->leftJoin('cp.produit', 'p')
+            ->addSelect('cp', 'p')
+            ->andWhere('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
