@@ -16,28 +16,42 @@ class RestaurantRepository extends ServiceEntityRepository
         parent::__construct($registry, Restaurant::class);
     }
 
-    //    /**
-    //     * @return Restaurant[] Returns an array of Restaurant objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve un restaurant par son nom exact.
+     */
+    public function findOneByNom(string $nom): ?Restaurant
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.nom = :nom')
+            ->setParameter('nom', $nom)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Restaurant
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Trouve un restaurant par son adresse exacte.
+     */
+    public function findOneByAdresse(string $adresse): ?Restaurant
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.adresse = :adresse')
+            ->setParameter('adresse', $adresse)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Recherche des restaurants par mot-clé dans le nom ou l'adresse.
+     *
+     * @return Restaurant[]
+     */
+    public function searchByKeyword(string $keyword): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.nom LIKE :kw OR r.adresse LIKE :kw')
+            ->setParameter('kw', '%' . $keyword . '%')
+            ->orderBy('r.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

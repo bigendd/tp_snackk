@@ -34,7 +34,7 @@ class Borne
     #[Groups(['borne:read', 'borne:write', 'commande_info:read', 'commande:read'])]
     private ?string $nom = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'bornes')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
     #[Groups(['borne:read', 'borne:write', 'commande_info:read', 'commande:read'])]

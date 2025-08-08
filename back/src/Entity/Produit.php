@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use App\Entity\TypeProduit;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -44,7 +45,7 @@ class Produit
         max: 150,
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['produit:read', 'produit:write', 'category:read','commande:read'])]
+    #[Groups(['produit:read', 'produit:write', 'category:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -54,7 +55,7 @@ class Produit
     #[ORM\Column]
     #[Assert\NotNull(message: "Le prix de base est obligatoire.")]
     #[Assert\Positive(message: "Le prix doit être un nombre positif.")]
-    #[Groups(['produit:read', 'produit:write', 'commande:read'])]
+    #[Groups(['produit:read', 'produit:write'])]
     private ?float $prix_base = null;
 
     #[ORM\Column]
@@ -66,6 +67,11 @@ class Produit
     #[Assert\NotNull(message: "La date de création est obligatoire.")]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Le type de produit est obligatoire.")]
+    #[Groups(['produit:read', 'produit:write'])]
+    private ?TypeProduit $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'produit')]
     #[Assert\NotNull(message: "La catégorie est obligatoire.")]
@@ -73,39 +79,25 @@ class Produit
     private ?Category $category = null;
 
     /**
-     * @var Collection<int, Sauce>
-     */
-    #[ORM\OneToMany(targetEntity: Sauce::class, mappedBy: 'produit')]
-    #[Groups(['produit:read'])]
-    private Collection $sauce;
-
-    /**
-     * @var Collection<int, Viande>
-     */
-    #[ORM\OneToMany(targetEntity: Viande::class, mappedBy: 'produit')]
-    #[Groups(['produit:read'])]
-    private Collection $viande;
-
-    /**
-     * @var Collection<int, Supplement>
-     */
-    #[ORM\OneToMany(targetEntity: Supplement::class, mappedBy: 'produit')]
-    #[Groups(['produit:read'])]
-    private Collection $supplement;
-
-    /**
      * @var Collection<int, Ingredient>
      */
-    #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'produit')]
-    #[Groups(['produit:read'])]
-    private Collection $ingredients;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: Ingredient::class, cascade: ['persist', 'remove'])]
+    #[Groups(['produit:read', 'produit:write'])]
+    private Collection $ingredientsInclus;
+
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: ProduitIngredient::class, cascade: ['persist', 'remove'])]
+    #[Groups(['produit:read', 'produit:write'])]
+    private Collection $produitIngredients;
+
 
     public function __construct()
     {
         $this->sauce = new ArrayCollection();
         $this->viande = new ArrayCollection();
         $this->supplement = new ArrayCollection();
-        $this->ingredients = new ArrayCollection();
+        $this->ingredientsInclus = new ArrayCollection();
+        $this->produitIngredients = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -125,70 +117,45 @@ class Produit
 
     public function getCreatedAt(): ?\DateTimeImmutable{ return $this->createdAt; }
 
+    public function getType(): ?TypeProduit
+    {
+    return $this->type;
+    }
+
+    public function setType(?TypeProduit $type): static
+    {
+    $this->type = $type;
+    return $this;
+    }
+
     public function getCategory(): ?Category { return $this->category; }
     public function setCategory(?Category $category): static { $this->category = $category; return $this; }
 
-    /** @return Collection<int, Sauce> */
-    public function getSauce(): Collection { return $this->sauce; }
-    public function addSauce(Sauce $sauce): static {
-        if (!$this->sauce->contains($sauce)) {
-            $this->sauce->add($sauce);
-            $sauce->setProduit($this);
-        }
-        return $this;
-    }
-    public function removeSauce(Sauce $sauce): static {
-        if ($this->sauce->removeElement($sauce) && $sauce->getProduit() === $this) {
-            $sauce->setProduit(null);
-        }
-        return $this;
+    /**
+     * @return Collection<int, Ingredient>
+     */
+    public function getIngredientsInclus(): Collection
+    {
+        return $this->ingredientsInclus;
     }
 
-    /** @return Collection<int, Viande> */
-    public function getViande(): Collection { return $this->viande; }
-    public function addViande(Viande $viande): static {
-        if (!$this->viande->contains($viande)) {
-            $this->viande->add($viande);
-            $viande->setProduit($this);
-        }
-        return $this;
-    }
-    public function removeViande(Viande $viande): static {
-        if ($this->viande->removeElement($viande) && $viande->getProduit() === $this) {
-            $viande->setProduit(null);
-        }
-        return $this;
-    }
-
-    /** @return Collection<int, Supplement> */
-    public function getSupplement(): Collection { return $this->supplement; }
-    public function addSupplement(Supplement $supplement): static {
-        if (!$this->supplement->contains($supplement)) {
-            $this->supplement->add($supplement);
-            $supplement->setProduit($this);
-        }
-        return $this;
-    }
-    public function removeSupplement(Supplement $supplement): static {
-        if ($this->supplement->removeElement($supplement) && $supplement->getProduit() === $this) {
-            $supplement->setProduit(null);
-        }
-        return $this;
-    }
-
-    /** @return Collection<int, Ingredient> */
-    public function getIngredients(): Collection { return $this->ingredients; }
-    public function addIngredient(Ingredient $ingredient): static {
-        if (!$this->ingredients->contains($ingredient)) {
-            $this->ingredients->add($ingredient);
+    public function addIngredientsInclus(Ingredient $ingredient): static
+    {
+        if (!$this->ingredientsInclus->contains($ingredient)) {
+            $this->ingredientsInclus->add($ingredient);
             $ingredient->setProduit($this);
         }
         return $this;
     }
-    public function removeIngredient(Ingredient $ingredient): static {
-        if ($this->ingredients->removeElement($ingredient) && $ingredient->getProduit() === $this) {
+
+    public function removeIngredientsInclus(Ingredient $ingredient): static
+    {
+    if ($this->ingredientsInclus->removeElement($ingredient)) {
+        // mettre le produit de l'ingredient à null s'il pointe sur ce produit
+        if ($ingredient->getProduit() === $this) {
             $ingredient->setProduit(null);
         }
-        return $this;
+    }
+    return $this;
     }
 }

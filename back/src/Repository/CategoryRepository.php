@@ -40,4 +40,61 @@ class CategoryRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Récupère toutes les catégories disponibles.
+     *
+     * @return Category[]
+     */
+    public function findAvailable(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.disponible = :val')
+            ->setParameter('val', true)
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Récupère les catégories par nom exact.
+     */
+    public function findOneByNom(string $nom): ?Category
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.nom = :nom')
+            ->setParameter('nom', $nom)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Recherche les catégories par mot-clé sur le nom.
+     *
+     * @return Category[]
+     */
+    public function searchByKeyword(string $keyword): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.nom LIKE :kw')
+            ->setParameter('kw', '%' . $keyword . '%')
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Récupère les catégories avec leurs produits associés.
+     *
+     * @return Category[]
+     */
+    public function findAllWithProducts(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.produit', 'p')
+            ->addSelect('p')
+            ->orderBy('c.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

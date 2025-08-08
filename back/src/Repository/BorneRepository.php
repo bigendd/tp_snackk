@@ -40,4 +40,49 @@ class BorneRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+/**
+     * Trouve une borne par son nom exact.
+     */
+    public function findOneByNom(string $nom): ?Borne
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.nom = :nom')
+            ->setParameter('nom', $nom)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Récupère toutes les bornes d'un restaurant donné.
+     *
+     * @param Restaurant|int $restaurant
+     * @return Borne[]
+     */
+    public function findByRestaurant($restaurant): array
+    {
+        $restaurantId = $restaurant instanceof Restaurant ? $restaurant->getId() : $restaurant;
+
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.restaurant = :resto')
+            ->setParameter('resto', $restaurantId)
+            ->orderBy('b.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recherche des bornes par mot-clé sur le nom.
+     *
+     * @return Borne[]
+     */
+    public function searchByKeyword(string $keyword): array
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.nom LIKE :kw')
+            ->setParameter('kw', '%' . $keyword . '%')
+            ->orderBy('b.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

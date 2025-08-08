@@ -3,6 +3,6 @@ namespace App\Enum;
 
 enum MoyenDePaiment: string
 {
-    case SUR_PLACE = 'espèce';
-    case EMPORTER = 'carte_bancaire';
+    case ESPECE = 'espece';
+    case CARTE_BANCAIRE = 'CB';
 }

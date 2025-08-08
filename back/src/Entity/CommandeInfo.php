@@ -25,17 +25,17 @@ class CommandeInfo
     #[ORM\OneToOne(inversedBy: 'commandeInfo', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
-    #[Groups(['commande_info:read', 'commande_info:write', 'commande:read'])]
+    #[Groups(['commande_info:read', 'commande_info:write'])]
     private ?Commande $commande = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull]
-    #[Groups(['commande_info:read', 'commande_info:write', 'commande:read'])]
+    #[Groups(['commande_info:read', 'commande_info:write'])]
     private ?Restaurant $restaurant = null;
 
     #[ORM\ManyToOne]
-    #[Groups(['commande_info:read', 'commande_info:write', 'commande:read'])]
+    #[Groups(['commande_info:read', 'commande_info:write'])]
     private ?Borne $borne = null;
 
 

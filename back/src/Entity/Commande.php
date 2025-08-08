@@ -11,6 +11,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\CommandeProduit;
+use App\Entity\User;
+use App\Entity\CommandeInfo;
+use App\Enum\StatutCommande;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource(
@@ -25,11 +29,11 @@ class Commande
     #[Groups(['commande:read'])]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['commande:read', 'commande:write'])]
-    private ?\DateTime $date = null;
+    private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(enumType: StatutCommande::class)]
+    #[ORM\Column(type: 'string', enumType: StatutCommande::class)]
     #[Assert\NotNull]
     #[Groups(['commande:read', 'commande:write'])]
     private ?StatutCommande $statut = null;
@@ -45,9 +49,9 @@ class Commande
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[Groups(['commande:read', 'commande:write'])]
-    private ?User $user = null; // facultatif
+    private ?User $user = null;
 
-    [ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Assert\Valid]
     #[Groups(['commande:read', 'commande:write'])]
     private Collection $commandeProduits;
@@ -55,10 +59,6 @@ class Commande
     #[ORM\OneToOne(mappedBy: 'commande', targetEntity: CommandeInfo::class, cascade: ['persist', 'remove'])]
     #[Groups(['commande:read', 'commande:write'])]
     private ?CommandeInfo $commandeInfo = null;
-
-    #[ORM\Column(type: 'float')]
-    #[Groups(['commande:read'])]
-    private float $montant_total = 0.0;
 
     public function __construct()
     {
@@ -73,19 +73,27 @@ class Commande
         return $this->id;
     }
 
-    public function getDate(): ?\DateTime
+    public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
     }
 
-    public function setDate(\DateTime $date): static
+    public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
         return $this;
     }
 
-    public function getStatut(): ?StatutCommande { return $this->statut; }
-    public function setStatut(StatutCommande $statut): static { $this->statut = $statut; return $this; }
+    public function getStatut(): ?StatutCommande
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(StatutCommande $statut): static
+    {
+        $this->statut = $statut;
+        return $this;
+    }
 
     public function getModeCons(): ?ModeConsommation
     {
@@ -123,7 +131,11 @@ class Commande
     /**
      * @return Collection<int, CommandeProduit>
      */
-    public function getCommandeProduits(): Collection { return $this->commandeProduits; }
+    public function getCommandeProduits(): Collection
+    {
+        return $this->commandeProduits;
+    }
+
     public function addCommandeProduit(CommandeProduit $cp): static
     {
         if (!$this->commandeProduits->contains($cp)) {
@@ -132,6 +144,7 @@ class Commande
         }
         return $this;
     }
+
     public function removeCommandeProduit(CommandeProduit $cp): static
     {
         if ($this->commandeProduits->removeElement($cp)) {
@@ -141,7 +154,12 @@ class Commande
         }
         return $this;
     }
-    public function getCommandeInfo(): ?CommandeInfo { return $this->commandeInfo; }
+
+    public function getCommandeInfo(): ?CommandeInfo
+    {
+        return $this->commandeInfo;
+    }
+
     public function setCommandeInfo(?CommandeInfo $info): static
     {
         $this->commandeInfo = $info;
@@ -151,6 +169,4 @@ class Commande
         return $this;
     }
 
-    public function getMontantTotal(): ?float { return $this->montantTotal; }
-    public function setMontantTotal(float $montantTotal): static { $this->montantTotal = $montantTotal; return $this; }
 }
