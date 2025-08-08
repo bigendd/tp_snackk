@@ -48,7 +48,6 @@ class Ingredient
     private ?float $prixSupplement = null;
 
     #[ORM\ManyToOne(targetEntity: Produit::class, inversedBy: 'ingredientsInclus')]
-    #[Assert\NotNull(message: "Le produit associé est obligatoire.")]
     #[Groups(['ingredient:read', 'ingredient:write'])]
     private ?Produit $produit = null;
 

@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(
@@ -46,8 +48,9 @@ class Restaurant
     #[Assert\Length(min: 5, max: 255)]
     #[Groups(['restaurant:read', 'restaurant:write', 'commande_info:read', 'commande:read'])]
     private ?string $adresse = null;
-
-    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: Borne::class, cascade: ['remove'])]
+    
+    #[Groups(['restaurant:read', 'restaurant:write'])]
+    #[ORM\OneToMany(mappedBy: 'restaurant', targetEntity: Borne::class, cascade: ['persist', 'remove'])]
     private Collection $bornes;
 
     public function __construct()

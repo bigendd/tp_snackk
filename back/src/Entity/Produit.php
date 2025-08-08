@@ -48,7 +48,7 @@ class Produit
     #[Groups(['produit:read', 'produit:write', 'category:read'])]
     private ?string $nom = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: 'text', nullable: true)]
     #[Groups(['produit:read', 'produit:write'])]
     private ?string $description = null;
 

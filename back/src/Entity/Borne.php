@@ -35,8 +35,7 @@ class Borne
     private ?string $nom = null;
 
     #[ORM\ManyToOne(inversedBy: 'bornes')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(['borne:read', 'borne:write', 'commande_info:read', 'commande:read'])]
     private ?Restaurant $restaurant = null;
 

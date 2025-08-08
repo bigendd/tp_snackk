@@ -8,24 +8,39 @@ use App\Repository\CommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post; 
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\GetCollection;
+
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['commande:read']]), 
+        new Post(denormalizationContext: ['groups' => ['commande:write']]),
+        new Put(denormalizationContext: ['groups' => ['commande:write']])
+    ],
+    normalizationContext: ['groups' => ['commande:read']]
+)]
 class Commande
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['commande:read'])]
+    #[Groups(['commande:read', 'commande_produit:read'])]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTime $date = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Assert\NotNull(message: "La date de création est obligatoire.")]
+    #[Groups(['commande:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true, enumType: ModeConsommation::class)]
+    #[Groups(['commande:read', 'commande:write'])]
     private ?ModeConsommation $mode_cons = null;
 
     #[ORM\Column(enumType: MoyenDePaiment::class)]
@@ -34,20 +49,21 @@ class Commande
     private ?MoyenDePaiment $moyen_paiment = null;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[Groups(['commande:read', 'commande:write'])]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commandes')]
-    private ?Category $category = null;
-
     #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'])]
+    #[Groups(['commande:read', 'commande:write'])]
     private Collection $commandeProduits;
 
     #[ORM\OneToOne(mappedBy: 'commande', targetEntity: CommandeInfo::class, cascade: ['persist', 'remove'])]
+    #[Groups(['commande:read', 'commande:write'])]
     private ?CommandeInfo $commandeInfo = null;
 
     public function __construct()
     {
         $this->commandeProduits = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -55,14 +71,14 @@ class Commande
         return $this->id;
     }
 
-    public function getDate(): ?\DateTime
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->date;
+        return $this->createdAt;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->date = $date;
+        $this->createdAt = $createdAt;
         return $this;
     }
 
@@ -96,17 +112,6 @@ class Commande
     public function setUser(?User $user): static
     {
         $this->user = $user;
-        return $this;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
         return $this;
     }
 
