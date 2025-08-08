@@ -48,8 +48,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:write'])]
     private ?string $password = null;
 
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $commandes;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commande::class)]
+private Collection $commandes;
 
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserInfo::class, cascade: ['persist', 'remove'])]
     #[Groups(['user:read', 'user:write'])]

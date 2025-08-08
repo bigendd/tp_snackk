@@ -29,7 +29,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         new Delete()
     ]
 )]
->>>>>>> feature/ValidationDesChamps
 class Produit
 {
     #[ORM\Id]
@@ -94,9 +93,6 @@ class Produit
 
     public function __construct()
     {
-        $this->sauce = new ArrayCollection();
-        $this->viande = new ArrayCollection();
-        $this->supplement = new ArrayCollection();
         $this->ingredientsInclus = new ArrayCollection();
         $this->produitIngredients = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();

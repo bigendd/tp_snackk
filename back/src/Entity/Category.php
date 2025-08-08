@@ -67,12 +67,12 @@ class Category
      * @var Collection<int, Commande>
      */
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'category')]
-    private Collection $commande;
+    private Collection $commandes;
 
     public function __construct()
     {
         $this->produit = new ArrayCollection();
-        $this->commande = new ArrayCollection();
+        $this->commandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -104,7 +104,13 @@ class Category
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-    return $this->createdAt;
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 
     /**
@@ -138,15 +144,15 @@ class Category
     /**
      * @return Collection<int, Commande>
      */
-    public function getCommande(): Collection
+    public function getCommandes(): Collection
     {
-        return $this->commande;
+        return $this->commandes;
     }
 
     public function addCommande(Commande $commande): static
     {
-        if (!$this->commande->contains($commande)) {
-            $this->commande->add($commande);
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
             $commande->setCategory($this);
         }
 
@@ -155,8 +161,7 @@ class Category
 
     public function removeCommande(Commande $commande): static
     {
-        if ($this->commande->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
+        if ($this->commandes->removeElement($commande)) {
             if ($commande->getCategory() === $this) {
                 $commande->setCategory(null);
             }

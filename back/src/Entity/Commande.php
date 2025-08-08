@@ -6,9 +6,11 @@ use App\Enum\ModeConsommation;
 use App\Enum\MoyenDePaiment;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Produit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource]
@@ -31,15 +33,22 @@ class Commande
     #[Groups(['commande:read', 'commande:write'])]
     private ?MoyenDePaiment $moyen_paiment = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commande')]
-    private ?Category $category = null;
-
-    #[ORM\ManyToOne(inversedBy: 'commande')]
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Produit::class)]
-    private Collection $produits;
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    private ?Category $category = null;
 
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'])]
+    private Collection $commandeProduits;
+
+    #[ORM\OneToOne(mappedBy: 'commande', targetEntity: CommandeInfo::class, cascade: ['persist', 'remove'])]
+    private ?CommandeInfo $commandeInfo = null;
+
+    public function __construct()
+    {
+        $this->commandeProduits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -54,7 +63,6 @@ class Commande
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -91,6 +99,17 @@ class Commande
         return $this;
     }
 
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+        return $this;
+    }
+
     /**
      * @return Collection<int, CommandeProduit>
      */
@@ -99,19 +118,36 @@ class Commande
         return $this->commandeProduits;
     }
 
-    public function addProduit(Produit $produit): self
+    public function addCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits[] = $produit;
+        if (!$this->commandeProduits->contains($commandeProduit)) {
+            $this->commandeProduits[] = $commandeProduit;
+            $commandeProduit->setCommande($this);
         }
-
         return $this;
     }
 
-    public function removeProduit(Produit $produit): self
+    public function removeCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        $this->produits->removeElement($produit);
+        if ($this->commandeProduits->removeElement($commandeProduit)) {
+            if ($commandeProduit->getCommande() === $this) {
+                $commandeProduit->setCommande(null);
+            }
+        }
+        return $this;
+    }
 
+    public function getCommandeInfo(): ?CommandeInfo
+    {
+        return $this->commandeInfo;
+    }
+
+    public function setCommandeInfo(?CommandeInfo $commandeInfo): static
+    {
+        if ($commandeInfo->getCommande() !== $this) {
+            $commandeInfo->setCommande($this);
+        }
+        $this->commandeInfo = $commandeInfo;
         return $this;
     }
 }
