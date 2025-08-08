@@ -19,22 +19,22 @@ export default function Categories() {
   const [categoryList, setCategoryList] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function fetchCategories() {
-      setLoading(true)
-      try {
-        const categoriesFromApi = await getCategories()
-        const parsed = categoryListSchema.parse(categoriesFromApi)
-        setCategoryList(parsed.member)
-      } catch (err) {
-        console.error('Erreur de validation des catégories :', err)
-      } finally {
-        setLoading(false)
-      }
+useEffect(() => {
+  async function fetchCategories() {
+    setLoading(true)
+    try {
+      const categoriesFromApi = await getCategories() // c’est déjà un Category[]
+      setCategoryList(categoriesFromApi)
+    } catch (err) {
+      console.error('Erreur de validation des catégories :', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchCategories()
-  }, [])
+  fetchCategories()
+}, [])
+
 
   const handleCategoryCreated = (newCategory: Category) => {
     setCategoryList(prev => [newCategory, ...prev])

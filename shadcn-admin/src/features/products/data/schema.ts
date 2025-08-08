@@ -9,7 +9,6 @@ export const categorySchema = z.object({
   "@type": z.string(),
 });
 
-// Schéma produit complet (inchangé)
 export const produitSchema = z.object({
   id: z.number(),
   nom: z.string().max(150),
@@ -17,10 +16,10 @@ export const produitSchema = z.object({
   prix_base: z.number(),
   disponible: z.boolean(),
   category: z.union([
-    categorySchema,        // objet complet
-    z.string(),           // ou URL string
-    z.null(),             // ou null si nullable
-  ]).nullable(),          // garde nullable si PHP l’autorise
+    categorySchema,        
+    z.string(),           
+    z.null(),             
+  ]).nullable(),          
 });
 
 // Nouveau schéma pour la création d'un produit (inchangé)

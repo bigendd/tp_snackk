@@ -43,16 +43,11 @@ class Category
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'category')]
     private Collection $produit;
 
-    /**
-     * @var Collection<int, Commande>
-     */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'category')]
-    private Collection $commande;
+
 
     public function __construct()
     {
         $this->produit = new ArrayCollection();
-        $this->commande = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,34 +108,6 @@ class Category
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getCommande(): Collection
-    {
-        return $this->commande;
-    }
-
-    public function addCommande(Commande $commande): static
-    {
-        if (!$this->commande->contains($commande)) {
-            $this->commande->add($commande);
-            $commande->setCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): static
-    {
-        if ($this->commande->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
-            if ($commande->getCategory() === $this) {
-                $commande->setCategory(null);
-            }
-        }
-
-        return $this;
-    }
 }
+
+    

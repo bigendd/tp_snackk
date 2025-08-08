@@ -6,6 +6,7 @@ export const produitSchema = z.object({
   description: z.string().optional(),
   prix_base: z.number().optional(),
   disponible: z.boolean(),
+    prix_suppl: z.number().optional(),  // <-- ici, prix_suppl optionnel et bien défini
 })
 
 export const supplementSchema = z.object({
@@ -13,6 +14,7 @@ export const supplementSchema = z.object({
   nom: z.string().max(150),
   disponible: z.boolean(),
   produit: z.union([produitSchema, z.string(), z.null()]).nullable(),
+    prix_suppl: z.number().optional(), // <-- idem ici si le supplément peut avoir un prix_suppl
 })
 
 export const supplementCreateSchema = z.object({

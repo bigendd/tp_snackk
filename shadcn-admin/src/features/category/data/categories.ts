@@ -1,15 +1,19 @@
-import { Category } from './schema'
 import apiClient from '@/lib/api/apiClient'
+import { categoryListSchema, Category } from '@/features/category/data/schema'
 
 export async function getCategories(): Promise<Category[]> {
   try {
     const response = await apiClient.get('/categories')
-    return response.data
+    const parsed = categoryListSchema.parse(response.data) // valide l'objet complet
+    return parsed.member // retourne directement le tableau des catégories
   } catch (error) {
     console.error('Erreur lors du chargement des catégories :', error)
     return []
   }
 }
+
+
+
 
 export async function createCategory(category: Omit<Category, 'id' | '@id' | '@type'>): Promise<Category | null> {
   try {

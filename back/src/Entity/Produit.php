@@ -8,10 +8,23 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
 
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Put(),
+        new Get(),
+        new Post(),
+        new Delete(),
+        new GetCollection(),  
+    ]
+)]
 
 
 class Produit

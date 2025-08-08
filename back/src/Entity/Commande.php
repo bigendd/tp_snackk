@@ -2,17 +2,30 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Enum\ModeConsommation;
 use App\Enum\MoyenDePaiment;
 use App\Repository\CommandeRepository;
-use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Produit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Put(),
+        new Get(),
+        new Post(),
+        new Delete(),
+        new GetCollection(),  
+    ]
+)]
 class Commande
 {
     #[ORM\Id]
@@ -21,30 +34,35 @@ class Commande
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?\DateTime $date = null;
+    private \DateTime $date;
 
-    #[ORM\Column(nullable: true, enumType: ModeConsommation::class)]
+    #[ORM\Column(enumType: ModeConsommation::class)]
     private ?ModeConsommation $mode_cons = null;
 
     #[ORM\Column(enumType: MoyenDePaiment::class)]
     private ?MoyenDePaiment $moyen_paiment = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commande')]
-    private ?Category $category = null;
-
-    #[ORM\ManyToOne(inversedBy: 'commande')]
+    #[ORM\ManyToOne]
     private ?User $user = null;
 
-    #[ORM\ManyToMany(targetEntity: Produit::class)]
-    private Collection $produits;
+    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'])]
+    private Collection $commandeProduits;
 
+    #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
+    private ?CommandeInfo $commandeInfo = null;
+
+    public function __construct()
+    {
+        $this->commandeProduits = new ArrayCollection();
+        $this->date = new \DateTime();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDate(): ?\DateTime
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
@@ -52,7 +70,6 @@ class Commande
     public function setDate(\DateTime $date): static
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -64,7 +81,6 @@ class Commande
     public function setModeCons(?ModeConsommation $mode_cons): static
     {
         $this->mode_cons = $mode_cons;
-
         return $this;
     }
 
@@ -73,22 +89,9 @@ class Commande
         return $this->moyen_paiment;
     }
 
-    public function setMoyenPaiment(MoyenDePaiment $moyen_paiment): static
+    public function setMoyenPaiment(?MoyenDePaiment $moyen_paiment): static
     {
         $this->moyen_paiment = $moyen_paiment;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
-
         return $this;
     }
 
@@ -100,30 +103,46 @@ class Commande
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
-/**
-     * @return Collection<int, Produit>
+
+    /**
+     * @return Collection<int, CommandeProduit>
      */
-    public function getProduits(): Collection
+    public function getCommandeProduits(): Collection
     {
-        return $this->produits;
+        return $this->commandeProduits;
     }
 
-    public function addProduit(Produit $produit): self
+    public function addCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits[] = $produit;
+        if (!$this->commandeProduits->contains($commandeProduit)) {
+            $this->commandeProduits[] = $commandeProduit;
+            $commandeProduit->setCommande($this);
         }
 
         return $this;
     }
 
-    public function removeProduit(Produit $produit): self
+    public function removeCommandeProduit(CommandeProduit $commandeProduit): static
     {
-        $this->produits->removeElement($produit);
+        if ($this->commandeProduits->removeElement($commandeProduit)) {
+            if ($commandeProduit->getCommande() === $this) {
+                $commandeProduit->setCommande(null);
+            }
+        }
 
+        return $this;
+    }
+
+    public function getCommandeInfo(): ?CommandeInfo
+    {
+        return $this->commandeInfo;
+    }
+
+    public function setCommandeInfo(?CommandeInfo $commandeInfo): static
+    {
+        $this->commandeInfo = $commandeInfo;
         return $this;
     }
 }

@@ -25,7 +25,7 @@ export const ingredientSchema = z.object({
   id: z.number(),
   nom: z.string().max(150),
   disponible: z.boolean(),
-  prix_suppl: z.number(),
+  prix_suppl: z.number().optional().default(0), // ✅ ici, on tolère son absence
   produit: z.union([
     produitSchema, // objet complet
     z.string(),    // ou string (URI)
