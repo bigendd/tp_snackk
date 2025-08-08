@@ -4,5 +4,5 @@ namespace App\Enum;
 enum ModeConsommation: string
 {
     case SUR_PLACE = 'sur_place';
-    case EMPORTER = 'emporter';
+    case A_EMPORTER = 'a_emporter';
 }

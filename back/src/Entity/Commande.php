@@ -5,71 +5,56 @@ namespace App\Entity;
 use App\Enum\ModeConsommation;
 use App\Enum\MoyenDePaiment;
 use App\Repository\CommandeRepository;
+use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Produit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\GetCollection;
-
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
-#[ApiResource(
-    operations: [
-        new Put(),
-        new Get(),
-        new Post(),
-        new Delete(),
-        new GetCollection(),  
-    ]
-)]
+#[ApiResource]
 class Commande
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['commande:read'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    private \DateTime $date;
+    private ?\DateTime $date = null;
 
-    #[ORM\Column(enumType: ModeConsommation::class)]
+    #[ORM\Column(nullable: true, enumType: ModeConsommation::class)]
     private ?ModeConsommation $mode_cons = null;
 
     #[ORM\Column(enumType: MoyenDePaiment::class)]
+    #[Assert\NotNull(message: "Le moyen de paiement est obligatoire")]
+    #[Groups(['commande:read', 'commande:write'])]
     private ?MoyenDePaiment $moyen_paiment = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'commande')]
+    private ?Category $category = null;
+
+    #[ORM\ManyToOne(inversedBy: 'commande')]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'commande', targetEntity: CommandeProduit::class, cascade: ['persist', 'remove'])]
-    private Collection $commandeProduits;
+    #[ORM\ManyToMany(targetEntity: Produit::class)]
+    private Collection $produits;
 
-    #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
-    private ?CommandeInfo $commandeInfo = null;
-
-    public function __construct()
-    {
-        $this->commandeProduits = new ArrayCollection();
-        $this->date = new \DateTime();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDate(): \DateTime
+    public function getDate(): ?\DateTime
     {
         return $this->date;
     }
 
-    public function setDate(\DateTime $date): static
+    public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
+
         return $this;
     }
 
@@ -114,35 +99,19 @@ class Commande
         return $this->commandeProduits;
     }
 
-    public function addCommandeProduit(CommandeProduit $commandeProduit): static
+    public function addProduit(Produit $produit): self
     {
-        if (!$this->commandeProduits->contains($commandeProduit)) {
-            $this->commandeProduits[] = $commandeProduit;
-            $commandeProduit->setCommande($this);
+        if (!$this->produits->contains($produit)) {
+            $this->produits[] = $produit;
         }
 
         return $this;
     }
 
-    public function removeCommandeProduit(CommandeProduit $commandeProduit): static
+    public function removeProduit(Produit $produit): self
     {
-        if ($this->commandeProduits->removeElement($commandeProduit)) {
-            if ($commandeProduit->getCommande() === $this) {
-                $commandeProduit->setCommande(null);
-            }
-        }
+        $this->produits->removeElement($produit);
 
-        return $this;
-    }
-
-    public function getCommandeInfo(): ?CommandeInfo
-    {
-        return $this->commandeInfo;
-    }
-
-    public function setCommandeInfo(?CommandeInfo $commandeInfo): static
-    {
-        $this->commandeInfo = $commandeInfo;
         return $this;
     }
 }

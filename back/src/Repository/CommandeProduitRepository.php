@@ -6,15 +6,19 @@ use App\Entity\CommandeProduit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+<<<<<<< HEAD
 /**
  * @extends ServiceEntityRepository<CommandeProduit>
  */
+=======
+>>>>>>> feature/ValidationDesChamps
 class CommandeProduitRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, CommandeProduit::class);
     }
+<<<<<<< HEAD
 
     //    /**
     //     * @return CommandeProduit[] Returns an array of CommandeProduit objects
@@ -40,4 +44,6 @@ class CommandeProduitRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+=======
+>>>>>>> feature/ValidationDesChamps
 }
