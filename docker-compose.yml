@@ -16,6 +16,19 @@ services:
     networks:
       - backend
 
+  cron:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: cron
+    command: cron -f
+    volumes:
+      - ./back:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - backend
+
   mysql:
     image: mysql:8
     platform: linux/amd64

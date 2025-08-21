@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     unzip zip git curl \
- && docker-php-ext-install pdo pdo_mysql mbstring xml zip
+    cron \
+ && docker-php-ext-install pdo pdo_mysql mbstring xml zip \
+ && apt-get clean
 
 # Installer MongoDB PHP extension
 
@@ -20,5 +22,16 @@ COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 # Activer mod_rewrite pour les URLs Symfony
 RUN a2enmod rewrite
 
+# 🔧 Créer le dossier de log pour cron
+RUN mkdir -p /var/log
+
+
+# Copier le fichier cron
+COPY crontab.txt /etc/cron.d/refresh-cron
+RUN chmod 0644 /etc/cron.d/refresh-cron 
+
 # Définir le dossier de travail par défaut
 WORKDIR /var/www/html
+
+
+

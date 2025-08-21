@@ -6,3 +6,7 @@ controllers:
 api_login:
     path: /api/login
     methods: [POST]
+
+gesdinett_jwt_refresh_token:
+    path: /api/token/refresh
+    # controller: gesdinet.gesdinett_jwt_refresh_token::refresh
