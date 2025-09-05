@@ -48,8 +48,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:write'])]
     private ?string $password = null;
 
+    #[ORM\Column(type:"datetime_immutable", nullable:true)]
+    private ?\DateTimeImmutable $passwordChangedAt = null;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Commande::class)]
-private Collection $commandes;
+    private Collection $commandes;
 
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserInfo::class, cascade: ['persist', 'remove'])]
     #[Groups(['user:read', 'user:write'])]
@@ -115,6 +118,17 @@ private Collection $commandes;
     public function setPassword(string $password): static
     {
         $this->password = $password;
+        return $this;
+    }
+
+    public function getPasswordChangedAt(): ?\DateTimeImmutable
+    {
+        return $this->passwordChangedAt;
+    }
+
+    public function setPasswordChangedAt(\DateTimeImmutable $date): self
+    {
+        $this->passwordChangedAt = $date;
         return $this;
     }
 

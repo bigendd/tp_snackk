@@ -30,6 +30,17 @@ security:
             pattern: ^/api/register
             stateless: true
             security: false
+        
+        forgot_password:
+            pattern: ^/api/forgot-password
+            stateless: true
+            security: false
+        
+        reset_password:
+            pattern: ^/api/reset-password
+            stateless: true
+            security: false
+        
 
         refresh_token:
             pattern: ^/api/token/refresh
@@ -45,6 +56,8 @@ security:
     access_control:
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/forgot-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/logout, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
