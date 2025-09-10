@@ -40,11 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Regex(
-        pattern: "/^(?=.*[A-Z])(?=.*\d).{8,}$/",
-        message: "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule et un chiffre."
-    )]
+    #[Assert\NotBlank(message: "Le mot de passe ne peut pas être vide")]
     #[Groups(['user:write'])]
     private ?string $password = null;
 

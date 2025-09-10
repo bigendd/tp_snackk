@@ -1,8 +1,9 @@
 <?php
-// src/Controller/RegisterController.php
+
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\PasswordValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegisterController extends AbstractController
 {
+    public function __construct(private PasswordValidator $passwordValidator) {}
+
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function register(
         Request $request,
@@ -24,6 +27,11 @@ class RegisterController extends AbstractController
 
         if (!$email || !$password) {
             return new JsonResponse(['error' => 'Email and password required'], 400);
+        }
+
+        // Validation sécurisée du mot de passe
+        if ($error = $this->passwordValidator->validate($password)) {
+            return new JsonResponse(['error' => $error], 400);
         }
 
         // Vérifie si l'utilisateur existe déjà
