@@ -21,8 +21,7 @@ export default function Navbar() {
        
         <Typography variant="h6" component={Link} to="/" sx={{ color: "white", textDecoration: "none", flexGrow: 1 }}>
          <IconButton
-          component={Link}
-          to="/"
+          
           edge="start"
           color="inherit"
           
