@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[UniqueEntity(fields: ['nom'], message: "Ce nom de produit existe déjà.")]
 #[ApiResource(
@@ -90,6 +91,11 @@ class Produit
     #[Groups(['produit:read', 'produit:write'])]
     private Collection $produitIngredients;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['produit:read', 'produit:write'])]
+    #[Assert\Url(message: "L'image doit être une URL valide.")]
+    private ?string $image = null;
+
 
     public function __construct()
     {
@@ -155,4 +161,16 @@ class Produit
     }
     return $this;
     }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+        return $this;
+    }
+
 }

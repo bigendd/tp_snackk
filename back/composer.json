@@ -10,6 +10,7 @@
         "api-platform/core": "*",
         "api-platform/doctrine-orm": "^4.1.20",
         "api-platform/symfony": "^4.1",
+        "cloudinary/cloudinary_php": "^3.1",
         "doctrine/dbal": "^3.10.1",
         "doctrine/doctrine-bundle": "^2.15.1",
         "doctrine/doctrine-migrations-bundle": "^3.4.2",
@@ -33,7 +34,8 @@
         "symfony/serializer": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/validator": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/yaml": "7.3.*",
+        "vich/uploader-bundle": "^2.8"
     },
     "config": {
         "allow-plugins": {
