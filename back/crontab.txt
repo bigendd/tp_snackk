@@ -1,0 +1,1 @@
+0 3 * * * root php /var/www/html/bin/console gesdinet:jwt:clear >> /var/log/refresh_cleanup.log 2>&1

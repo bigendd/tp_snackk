@@ -10,11 +10,13 @@ security:
 
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: 
+                - '^/(_(profiler|wdt)|css|images|js)/'
             security: false
 
+        # Les firewalls les plus spécifiques doivent être en haut
         login:
-            pattern: ^/api/login$
+            pattern: ^/api/login
             stateless: true
             json_login:
                 check_path: /api/login
@@ -23,10 +25,28 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             provider: app_user_provider
+
         register:
-                pattern: ^/api/register$
-                stateless: true
-                security: false  
+            pattern: ^/api/register
+            stateless: true
+            security: false
+        
+        forgot_password:
+            pattern: ^/api/forgot-password
+            stateless: true
+            security: false
+        
+        reset_password:
+            pattern: ^/api/reset-password
+            stateless: true
+            security: false
+        
+
+        refresh_token:
+            pattern: ^/api/token/refresh
+            stateless: true
+            refresh_jwt: ~
+
         api:
             pattern: ^/api
             stateless: true
@@ -34,6 +54,10 @@ security:
             provider: app_user_provider
 
     access_control:
-        - { path: ^/api/register$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/forgot-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/reset-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/logout, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
