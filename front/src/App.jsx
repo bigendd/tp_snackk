@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Categories from "./pages/Categories";
 import Produits from "./pages/Produits";
 import Commande from "./pages/Commande";
+import CreateCategory from "./pages/CreateCategory";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/categories/:id" element={<Produits />} />
           <Route path="/commande" element={<Commande />} />
+            <Route path="/create-category" element={<CreateCategory />} /> {/* ← essentiel */}
         </Routes>
       </Container>
     </BrowserRouter>
