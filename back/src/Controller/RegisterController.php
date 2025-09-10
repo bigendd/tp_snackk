@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserInfo;
 use App\Service\PasswordValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,19 +23,19 @@ class RegisterController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
+
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
+        $userInfoData = $data['userInfo'] ?? null;
 
-        if (!$email || !$password) {
-            return new JsonResponse(['error' => 'Email and password required'], 400);
+        if (!$email || !$password || !$userInfoData) {
+            return new JsonResponse(['error' => 'Email, password and userInfo required'], 400);
         }
 
-        // Validation sécurisée du mot de passe
         if ($error = $this->passwordValidator->validate($password)) {
             return new JsonResponse(['error' => $error], 400);
         }
 
-        // Vérifie si l'utilisateur existe déjà
         $existingUser = $em->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($existingUser) {
             return new JsonResponse(['error' => 'Email already used'], 400);
@@ -42,13 +43,18 @@ class RegisterController extends AbstractController
 
         $user = new User();
         $user->setEmail($email);
-        $hashedPassword = $passwordHasher->hashPassword($user, $password);
-        $user->setPassword($hashedPassword);
-
-        // Par exemple, tu peux donner un rôle par défaut
+        $user->setPassword($passwordHasher->hashPassword($user, $password));
         $user->setRoles(['ROLE_USER']);
 
+        $userInfo = new UserInfo();
+        $userInfo->setNom($userInfoData['nom'] ?? '');
+        $userInfo->setPrenom($userInfoData['prenom'] ?? '');
+        $userInfo->setTelephone($userInfoData['telephone'] ?? '');
+        $userInfo->setAdresse($userInfoData['adresse'] ?? '');
+        $userInfo->setUser($user);
+
         $em->persist($user);
+        $em->persist($userInfo);
         $em->flush();
 
         return new JsonResponse(['message' => 'User created'], 201);
