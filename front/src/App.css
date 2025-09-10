@@ -1,10 +1,102 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: none;
+  transition: color 0.25s;
+}
+a:hover {
+  color: #535bf2;
 }
 
+body {
+  margin: 0;
+
+  background-color: var(--background-color, #242424);
+  color: var(--text-color, rgba(255,255,255,0.87));
+  font-family: inherit;
+}
+
+h1, h2, h3, h4 {
+  margin: 0.5em 0;
+  font-weight: 600;
+  color: inherit;
+}
+
+
+/* ---- Navbar ---- */
+.MuiAppBar-root {
+  background-color: #1f1f1f !important;
+  color: white !important;
+}
+.MuiButton-root {
+  text-transform: none;
+  border-radius: 8px;
+}
+
+/* ---- Buttons ---- */
+button, .MuiButton-root {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+button:hover, .MuiButton-root:hover {
+  border-color: #646cff;
+  background-color: #292929;
+}
+button:focus, .MuiButton-root:focus,
+button:focus-visible, .MuiButton-root:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ---- Form containers ---- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input, .MuiInputBase-input {
+  padding: 0.6em 1em;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #1f1f1f;
+  color: white;
+  transition: all 0.25s;
+}
+input:focus, .MuiInputBase-input:focus {
+  border-color: #646cff;
+  outline: none;
+}
+
+/* ---- Cards / Form Boxes ---- */
+.box, .MuiPaper-root {
+  background-color: #1f1f1f;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  max-width: 100%;
+}
+
+/* ---- Logo animation ---- */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -17,26 +109,41 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
-
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
 }
+.MuiContainer-root{
+  display: flex;
+  align-items: center;
 
-.card {
-  padding: 2em;
 }
 
-.read-the-docs {
-  color: #888;
+/* ---- Light mode ---- */
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: #213547;
+    --background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button, .MuiButton-root {
+    background-color: #f9f9f9;
+    color: #213547;
+  }
+  input, .MuiInputBase-input {
+    background-color: #fff;
+    color: #213547;
+    border: 1px solid #ccc;
+  }
+  .box, .MuiPaper-root {
+    background-color: #f5f5f5;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
 }
