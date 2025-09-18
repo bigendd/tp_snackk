@@ -31,6 +31,10 @@ class UserInfo
     #[Groups(['userinfo:read', 'userinfo:write', 'user:read', 'user:write'])]
     private ?string $prenom = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['userinfo:read', 'userinfo:write', 'user:read', 'user:write'])]
+    private ?string $image = null;
+
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank]
     #[Assert\Regex(
@@ -76,6 +80,17 @@ class UserInfo
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
         return $this;
     }
 

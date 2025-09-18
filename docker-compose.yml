@@ -15,7 +15,20 @@ services:
       - COMPOSER_ALLOW_SUPERUSER=1
     networks:
       - backend
-
+  
+  cron:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    container_name: cron
+    command: ["cron", "-f"] # -f = foreground
+    volumes:
+      - ./back:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - php
+    networks:
+      - backend
 
   mysql:
     image: mysql:8
@@ -47,15 +60,18 @@ services:
       - mysql
     networks:
       - backend
-  node:
+
+  front:
     build:
-      context: ./admin-dashboard
+      context: ./front
       dockerfile: Dockerfile
-    platform: linux/amd64
-    container_name: react
+    container_name: snackk_front
     ports:
-      - "5173:5173"
- 
+      - "8082:80"
+    networks:
+      - backend
+    depends_on:
+      - php
 
 volumes:
   db_data:
