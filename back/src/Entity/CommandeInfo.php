@@ -30,11 +30,11 @@ class CommandeInfo
     #[Groups(['commande_info:read', 'commande_info:write'])]
     private ?Commande $commande = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
-    #[Groups(['commande_info:read', 'commande_info:write'])]
-    private ?Restaurant $restaurant = null;
+    // #[ORM\ManyToOne]
+    // #[ORM\JoinColumn(nullable: false)]
+    // #[Assert\NotNull]
+    // #[Groups(['commande_info:read', 'commande_info:write'])]
+    // private ?Restaurant $restaurant = null;
 
     #[ORM\ManyToOne]
     #[Groups(['commande_info:read', 'commande_info:write'])]
@@ -52,12 +52,12 @@ class CommandeInfo
         return $this;
     }
 
-    public function getRestaurant(): ?Restaurant { return $this->restaurant; }
-    public function setRestaurant(?Restaurant $restaurant): static
-    {
-        $this->restaurant = $restaurant;
-        return $this;
-    }
+    // public function getRestaurant(): ?Restaurant { return $this->restaurant; }
+    // public function setRestaurant(?Restaurant $restaurant): static
+    // {
+    //     $this->restaurant = $restaurant;
+    //     return $this;
+    // }
 
     public function getBorne(): ?Borne { return $this->borne; }
     public function setBorne(?Borne $borne): static

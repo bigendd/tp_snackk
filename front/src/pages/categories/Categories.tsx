@@ -2,12 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useAuth } from "../store/useAuth";
-import api from "../api/axios";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { useAuth } from "../../store/useAuth";
+import api from "../../api/axios";
+
+interface Category {
+  id: number;
+  nom: string;
+  disponible: boolean | number | string;
+  created_at: string;
+}
 
 export default function Categories() {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const { token } = useAuth();
   const navigate = useNavigate();
 
@@ -15,14 +22,18 @@ export default function Categories() {
     api
       .get("/categories")
       .then((res) => {
-        console.log("API response:", res.data);
-        const raw = Array.isArray(res.data.member) ? res.data.member : [];
-        const data = raw.map((cat: any, index: number) => ({
-          id: cat.id ?? index,
-          nom: cat.nom ?? "",
-          disponible: cat.disponible ?? false,
+        const raw = Array.isArray(res.data.member) ? res.data.member : res.data;
+
+        // Normalisation pour DataGrid
+        const formatted: Category[] = raw.map((cat: any) => ({
+          id: cat.id ?? parseInt(cat["@id"]?.split("/").pop() || "0"),
+          nom: cat.nom,
+          disponible: cat.disponible,
+          created_at: cat.createdAt || cat.created_at || "",
         }));
-        setCategories(data);
+
+        setCategories(formatted);
+        console.log("Categories API:", formatted);
       })
       .catch((err) => console.error(err));
   }, []);
@@ -39,25 +50,31 @@ export default function Categories() {
       field: "disponible",
       headerName: "Disponible",
       width: 120,
-      valueFormatter: (params: any) => {
-        // Sécurité si params ou params.value est undefined
-        if (!params || params.value === undefined || params.value === null) {
-          return "Non";
-        }
-        return params.value ? "Oui" : "Non";
+      renderCell: (params: GridRenderCellParams<Category>) => (
+        <span>{params.row.disponible ? "Oui" : "Non"}</span>
+      ),
+    },
+    {
+      field: "created_at",
+      headerName: "Créé le",
+      width: 150,
+      renderCell: (params: GridRenderCellParams<Category>) => {
+        if (!params.row.created_at) return "";
+        const date = new Date(params.row.created_at);
+        return <span>{isNaN(date.getTime()) ? "" : date.toLocaleDateString()}</span>;
       },
     },
     {
       field: "actions",
       headerName: "Actions",
       width: 150,
-      renderCell: (params: any) => (
+      renderCell: (params: GridRenderCellParams<Category>) => (
         <Button
           variant="outlined"
           size="small"
           onClick={() => navigate(`/categories/${params.row.id}`)}
         >
-          Voir produits
+          Voir catégorie
         </Button>
       ),
     },
@@ -66,7 +83,12 @@ export default function Categories() {
   return (
     <Box sx={{ p: 4, width: "100%" }}>
       <Box
-        sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 4 }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 4,
+        }}
       >
         <Typography variant="h4">Catégories</Typography>
         <Button
@@ -88,6 +110,7 @@ export default function Categories() {
             pagination: { paginationModel: { pageSize: 10, page: 0 } },
           }}
           disableRowSelectionOnClick
+          getRowId={(row) => String(row.id)} // <-- toujours string
         />
       </div>
     </Box>

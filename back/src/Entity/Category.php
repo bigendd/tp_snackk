@@ -54,6 +54,7 @@ class Category
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotNull(message: "La date de création est obligatoire.")]
+    #[Groups(['category:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**

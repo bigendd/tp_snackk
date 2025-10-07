@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
 #[UniqueEntity(fields: ['nom'], message: "Ce nom d'ingredient existe déjà.")]
@@ -15,6 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     normalizationContext: ['groups' => ['ingredient:read']],
     denormalizationContext: ['groups' => ['ingredient:write']]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['produit.id' => 'exact'])]
 class Ingredient
 {
     #[ORM\Id]

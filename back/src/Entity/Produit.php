@@ -46,7 +46,7 @@ class Produit
         max: 150,
         maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['produit:read', 'produit:write', 'category:read'])]
+    #[Groups(['produit:read', 'produit:write', 'category:read', 'ingredient:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -66,6 +66,7 @@ class Produit
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotNull(message: "La date de création est obligatoire.")]
+    #[Groups(['produit:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]

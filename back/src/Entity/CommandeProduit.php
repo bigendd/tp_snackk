@@ -51,7 +51,8 @@ class CommandeProduit
     private ?float $prixUnitaire = null;
 
     #[ORM\ManyToMany(targetEntity: Ingredient::class)]
-    #[Groups(['commande_produit:read', 'commande_produit:write'])]
+    #[ORM\JoinTable(name: 'commande_produit_ingredient')]
+    #[Groups(['commande_produit:read', 'commande_produit:write', 'commande:write'])]
     private Collection $ingredientsChoisis;
 
     public function __construct()

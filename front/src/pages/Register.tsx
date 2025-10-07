@@ -24,11 +24,25 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Reset error
+
     try {
-      await api.post("/register", { email, password, nom, prenom });
+      await api.post("/register", {
+        email,
+        password,
+        userInfo: {
+          nom,
+          prenom,
+        },
+      });
       navigate("/login");
     } catch (err: any) {
-      setError("Erreur lors de l'inscription");
+      // Affiche l'erreur exacte du backend si disponible
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("Erreur lors de l'inscription");
+      }
     }
   };
 
@@ -50,7 +64,6 @@ export default function Register() {
           display: "flex",
           flexDirection: "column",
           gap: 2,
-          
         }}
         elevation={6}
       >

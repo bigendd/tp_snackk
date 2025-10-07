@@ -32,7 +32,7 @@ class UserInfo
     private ?string $prenom = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\NotBlank]
+    // #[Assert\NotBlank]
     #[Assert\Regex(
         pattern: "/^\+?[0-9\s\-]{7,20}$/",
         message: "Numéro de téléphone invalide."
@@ -41,7 +41,7 @@ class UserInfo
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    // #[Assert\NotBlank]
     #[Groups(['userinfo:read', 'userinfo:write', 'user:read', 'user:write'])]
     private ?string $adresse = null;
 

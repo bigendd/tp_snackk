@@ -12,15 +12,15 @@ use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Post; 
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
-
+use App\Entity\CommandeInfo;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(normalizationContext: ['groups' => ['commande:read']]), 
+        new GetCollection(normalizationContext: ['groups' => ['commande:read']]),
         new Post(denormalizationContext: ['groups' => ['commande:write']]),
         new Put(denormalizationContext: ['groups' => ['commande:write']])
     ],
@@ -44,7 +44,7 @@ class Commande
     private ?ModeConsommation $mode_cons = null;
 
     #[ORM\Column(enumType: MoyenDePaiment::class)]
-    #[Assert\NotNull(message: "Le moyen de paiement est obligatoire")]
+    #[Assert\NotNull(message: "Le moyen de paiement est obligatoire.")]
     #[Groups(['commande:read', 'commande:write'])]
     private ?MoyenDePaiment $moyen_paiment = null;
 
@@ -64,6 +64,8 @@ class Commande
     {
         $this->commandeProduits = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+
+        // Ne pas créer CommandeInfo ici ! L'EventSubscriber ou le contrôleur fera l'association avec la borne existante
     }
 
     public function getId(): ?int
@@ -115,9 +117,6 @@ class Commande
         return $this;
     }
 
-    /**
-     * @return Collection<int, CommandeProduit>
-     */
     public function getCommandeProduits(): Collection
     {
         return $this->commandeProduits;
@@ -149,7 +148,7 @@ class Commande
 
     public function setCommandeInfo(?CommandeInfo $commandeInfo): static
     {
-        if ($commandeInfo->getCommande() !== $this) {
+        if ($commandeInfo && $commandeInfo->getCommande() !== $this) {
             $commandeInfo->setCommande($this);
         }
         $this->commandeInfo = $commandeInfo;
